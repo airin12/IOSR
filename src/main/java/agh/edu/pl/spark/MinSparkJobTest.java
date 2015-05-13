@@ -18,11 +18,11 @@ public class MinSparkJobTest {
         Map<String, String> tags = new HashMap<String, String>();
         tags.put("cpu","0");
         TSDBQueryParametrization queryParametrization = new TSDBQueryParametrizationBuilder()
-                .setStartTime(new Date(115, 3, 22).getTime())
+                .setStartTime(new Date(115, 4, 24).getTime())
                 .setEndTime(new Date().getTime())
                 .setTags(tags)
                 .setMetric("sys.cpu.nice").build();
-        Double result = new MinSparkJob(tsdb).execute(queryParametrization);
+        Object result = new MinSparkJob(tsdb).execute(queryParametrization);
         System.out.print("Result=" + result);
     }
 }

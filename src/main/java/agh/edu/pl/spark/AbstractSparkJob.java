@@ -1,14 +1,23 @@
 package agh.edu.pl.spark;
 
-import net.opentsdb.core.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import net.opentsdb.core.Aggregators;
+import net.opentsdb.core.DataPoints;
+import net.opentsdb.core.Query;
+import net.opentsdb.core.SeekableView;
+import net.opentsdb.core.TSDB;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class AbstractSparkJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(MinSparkJob.class);
@@ -18,7 +27,7 @@ public abstract class AbstractSparkJob {
         this.tsdb = tsdb;
     }
 
-    public Double execute(TSDBQueryParametrization queryParametrization){
+    public Object execute(TSDBQueryParametrization queryParametrization){
         Query query = buildQuery(queryParametrization);
         DataPoints[] matchingPoints = query.run();
         if (matchingPoints.length == 0){
@@ -27,8 +36,8 @@ public abstract class AbstractSparkJob {
         }
         LOGGER.info("Fetched {} points.", matchingPoints[0].aggregatedSize());
         List<Double> values = extractValues(matchingPoints[0]);
-        //TODO: read appName and master from configuration file
-        SparkConf conf = new SparkConf().setAppName("example").setMaster("local");
+        //TODO: read appName, jar file and master from configuration file
+        SparkConf conf = new SparkConf().setAppName("Grafana Service").setMaster("spark://172.17.84.76:7077").setJars(new String[]{"/root/files/spark.jar"});
         JavaSparkContext context = new JavaSparkContext(conf);
         try {
             return execute(context.parallelize(values));
@@ -54,5 +63,5 @@ public abstract class AbstractSparkJob {
         return values;
     }
 
-    protected abstract Double execute(JavaRDD<Double> rdd);
+    protected abstract Object execute(JavaRDD<Double> rdd);
 }

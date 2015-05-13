@@ -16,9 +16,10 @@ public class GrafanaService {
 	@GET
 	@Path("/query")
 	public String executeSparkJob(){
-		SparkSubmit.main("--class agh.edu.pl.spark.SparkJobTemplate  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark_test/spark_test/target/original-spark_test.jar".split(" "));
-		
+		   
+		SparkSubmit.main("--class agh.edu.pl.spark.SparkJobRunner  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar".split(" "));
 		return resultMap.get("job").toString();
+		
 	}
 	
 }

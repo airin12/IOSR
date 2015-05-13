@@ -1,10 +1,8 @@
 package agh.edu.pl.spark;
 
 import net.opentsdb.core.TSDB;
-import org.apache.spark.api.java.JavaRDD;
 
-import java.io.Serializable;
-import java.util.Comparator;
+import org.apache.spark.api.java.JavaRDD;
 
 public class MinSparkJob extends AbstractSparkJob{
 
@@ -17,11 +15,4 @@ public class MinSparkJob extends AbstractSparkJob{
         return rdd.min(new DoubleComparator());
     }
 
-    private static class DoubleComparator implements Comparator<Double>, Serializable {
-        static final long serialVersionUID = 1L;
-
-        public int compare(Double first, Double second) {
-            return Double.compare(first, second);
-        }
-    }
 }
