@@ -5,21 +5,42 @@ import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.apache.spark.deploy.SparkSubmit;
 
 @Path("/grafana")
 public class GrafanaService {
 
-	public static Map<String,Object> resultMap = new HashMap<String,Object>();
-	
+	public static Map<String, Object> resultMap = new HashMap<String, Object>();
+
 	@GET
-	@Path("/query")
-	public String executeSparkJob(){
-		   
-		SparkSubmit.main("--class agh.edu.pl.spark.SparkJobRunner  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar".split(" "));
-		return resultMap.get("job").toString();
+	@Path("/query/{start}/{end}/{metric}/{aggregator}/{tags}")
+	public String executeSparkJob(@PathParam("start") String start, @PathParam("end") String end, @PathParam("metric") String metric,
+			@PathParam("aggregator") String aggregator, @PathParam("tags") String tags) {
+
+		String combinedQuery = createCombinedQuery(start,end,metric,aggregator,tags);
+		if(combinedQuery == null)
+			return "Bad query";
 		
+		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+combinedQuery).split(" "));
+		return resultMap.get("job").toString();
+
 	}
-	
+
+	private String createCombinedQuery(String start, String end, String metric, String aggregator, String tags) {
+		if(start == null || start.equals(""))
+			return null;
+		else if( end == null || end.equals(""))
+			return null;
+		else if (metric == null || metric.equals(""))
+			return null;
+		else if( aggregator == null || aggregator.equals(""))
+			return null;
+		else if( tags == null || tags.equals(""))
+			return null;
+		
+		return start+":"+end+":"+metric+":"+aggregator+":"+tags;
+	}
+
 }

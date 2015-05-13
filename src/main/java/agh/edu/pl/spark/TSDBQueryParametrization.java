@@ -1,15 +1,15 @@
 package agh.edu.pl.spark;
 
-import net.opentsdb.core.Aggregator;
-
-import java.util.List;
 import java.util.Map;
+
+import net.opentsdb.core.Aggregator;
 
 public class TSDBQueryParametrization {
     private long startTime;
     private long endTime;
     private String metric;
     private Map<String, String> tags;
+    private Aggregator aggregator;
 
     public long getStartTime() {
         return startTime;
@@ -42,4 +42,13 @@ public class TSDBQueryParametrization {
     public void setTags(Map<String, String> tags) {
         this.tags = tags;
     }
+
+	public Aggregator getAggregator() {
+		return aggregator;
+	}
+
+	public void setAggregator(Aggregator aggregator) {
+		this.aggregator = aggregator;
+	}
+    
 }

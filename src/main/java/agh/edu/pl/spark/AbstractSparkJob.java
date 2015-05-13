@@ -1,13 +1,8 @@
 package agh.edu.pl.spark;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.opentsdb.core.Aggregators;
 import net.opentsdb.core.DataPoints;
 import net.opentsdb.core.Query;
 import net.opentsdb.core.SeekableView;
@@ -50,7 +45,7 @@ public abstract class AbstractSparkJob {
         Query query= tsdb.newQuery();
         query.setStartTime(queryParametrization.getStartTime());
         query.setEndTime(queryParametrization.getEndTime());
-        query.setTimeSeries(queryParametrization.getMetric(), queryParametrization.getTags(), Aggregators.SUM, false);
+        query.setTimeSeries(queryParametrization.getMetric(), queryParametrization.getTags(), queryParametrization.getAggregator(), false);
         return query;
     }
 

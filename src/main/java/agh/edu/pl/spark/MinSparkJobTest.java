@@ -1,12 +1,13 @@
 package agh.edu.pl.spark;
 
-import net.opentsdb.core.TSDB;
-import net.opentsdb.utils.Config;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.opentsdb.core.Aggregators;
+import net.opentsdb.core.TSDB;
+import net.opentsdb.utils.Config;
 
 public class MinSparkJobTest {
     public static void main(String[] args) throws IOException {
@@ -21,7 +22,8 @@ public class MinSparkJobTest {
                 .setStartTime(new Date(115, 4, 24).getTime())
                 .setEndTime(new Date().getTime())
                 .setTags(tags)
-                .setMetric("sys.cpu.nice").build();
+                .setMetric("sys.cpu.nice")
+                .setAggregator(Aggregators.SUM).build();
         Object result = new MinSparkJob(tsdb).execute(queryParametrization);
         System.out.print("Result=" + result);
     }
