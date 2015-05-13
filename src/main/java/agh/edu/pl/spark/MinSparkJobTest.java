@@ -1,5 +1,6 @@
 package agh.edu.pl.spark;
 
+import agh.edu.pl.util.ConfigurationProvider;
 import net.opentsdb.core.TSDB;
 import net.opentsdb.utils.Config;
 
@@ -9,9 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MinSparkJobTest {
+    private static final String CONFIGURATION_FILENAME = "config.properties";
+
     public static void main(String[] args) throws IOException {
-        //TODO: initialize Config with path retrieved from configuration file
-        //Config config = new Config("/path/to/opentsdb.conf");
         Config config = new Config(true);
         //Thread-safe implementation of the TSDB client - we can use one instance per whole service
         TSDB tsdb = new TSDB(config);
@@ -22,7 +23,8 @@ public class MinSparkJobTest {
                 .setEndTime(new Date().getTime())
                 .setTags(tags)
                 .setMetric("sys.cpu.nice").build();
-        Object result = new MinSparkJob(tsdb).execute(queryParametrization);
+        ConfigurationProvider configProvider = new ConfigurationProvider(CONFIGURATION_FILENAME);
+        Object result = new MinSparkJob(tsdb, configProvider).execute(queryParametrization);
         System.out.print("Result=" + result);
     }
 }

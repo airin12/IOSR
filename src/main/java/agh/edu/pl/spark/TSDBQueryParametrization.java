@@ -1,8 +1,5 @@
 package agh.edu.pl.spark;
 
-import net.opentsdb.core.Aggregator;
-
-import java.util.List;
 import java.util.Map;
 
 public class TSDBQueryParametrization {
