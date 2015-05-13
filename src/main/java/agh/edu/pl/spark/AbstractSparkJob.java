@@ -14,12 +14,19 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import agh.edu.pl.util.ConfigurationProvider;
+
 public abstract class AbstractSparkJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(MinSparkJob.class);
+    private static final String SPARK_MASTER_URL_PROPERTY_NAME = "spark.master.url";
+    private static final String SPARK_APP_NAME_PROPERTY_NAME = "spark.app.name";
+    private static final String SPARK_JAR_FILE_PROPERTY_NAME = "spark.jar.file";
     private final TSDB tsdb;
+    private final ConfigurationProvider configProvider;
 
-    public AbstractSparkJob(final TSDB tsdb){
+    public AbstractSparkJob(final TSDB tsdb, final ConfigurationProvider configProvider){
         this.tsdb = tsdb;
+        this.configProvider = configProvider;
     }
 
     public Object execute(TSDBQueryParametrization queryParametrization){
@@ -31,8 +38,10 @@ public abstract class AbstractSparkJob {
         }
         LOGGER.info("Fetched {} points.", matchingPoints[0].aggregatedSize());
         List<Double> values = extractValues(matchingPoints[0]);
-        //TODO: read appName, jar file and master from configuration file
-        SparkConf conf = new SparkConf().setAppName("Grafana Service").setMaster("spark://172.17.84.76:7077").setJars(new String[]{"/root/files/spark.jar"});
+        SparkConf conf = new SparkConf()
+                .setAppName(configProvider.getProperty(SPARK_APP_NAME_PROPERTY_NAME))
+                .setMaster(configProvider.getProperty(SPARK_MASTER_URL_PROPERTY_NAME))
+                .setJars(new String[]{configProvider.getProperty(SPARK_JAR_FILE_PROPERTY_NAME)});
         JavaSparkContext context = new JavaSparkContext(conf);
         try {
             return execute(context.parallelize(values));
