@@ -27,7 +27,7 @@ public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametr
 	
 	public TSDBQueryParametrization deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
 		
-		LOGGER.info("Deserializing json: {}",json.getAsString());
+		LOGGER.info("Deserializing json");
 		
 		JsonObject jsonObject = json.getAsJsonObject();
 		
