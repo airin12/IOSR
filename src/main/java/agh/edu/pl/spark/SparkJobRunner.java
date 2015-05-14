@@ -2,6 +2,8 @@ package agh.edu.pl.spark;
 
 import java.io.IOException;
 
+import agh.edu.pl.spark.job.MinSparkJob;
+import agh.edu.pl.spark.job.SqlSparkJob;
 import net.opentsdb.core.TSDB;
 import net.opentsdb.utils.Config;
 

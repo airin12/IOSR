@@ -1,4 +1,4 @@
-package agh.edu.pl.spark;
+package agh.edu.pl.spark.job;
 
 
 import java.io.IOException;
@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import agh.edu.pl.spark.TSDBQueryParametrization;
+import agh.edu.pl.spark.TSDBQueryParametrizationBuilder;
+import agh.edu.pl.spark.job.MinSparkJob;
 import net.opentsdb.core.Aggregators;
 import net.opentsdb.core.TSDB;
 import net.opentsdb.utils.Config;

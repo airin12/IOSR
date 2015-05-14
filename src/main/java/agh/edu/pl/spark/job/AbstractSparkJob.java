@@ -1,8 +1,9 @@
-package agh.edu.pl.spark;
+package agh.edu.pl.spark.job;
 
 import java.util.LinkedList;
 import java.util.List;
 
+import agh.edu.pl.spark.TSDBQueryParametrization;
 import net.opentsdb.core.DataPoints;
 import net.opentsdb.core.Query;
 import net.opentsdb.core.SeekableView;

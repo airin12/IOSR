@@ -1,9 +1,11 @@
-package agh.edu.pl.spark;
+package agh.edu.pl.spark.job;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import agh.edu.pl.spark.SparkSQLRDDExecutor;
+import agh.edu.pl.spark.TSDBQueryParametrization;
 import net.opentsdb.core.DataPoints;
 import net.opentsdb.core.Query;
 import net.opentsdb.core.TSDB;

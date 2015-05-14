@@ -13,7 +13,7 @@ public class SparkSQLRDDExecutor implements Serializable{
 	
 	private static final long serialVersionUID = -8063956721679295947L;
 
-	JavaRDD<Row> execute(JavaRDD<SingleRow> rdd){
+	public JavaRDD<Row> execute(JavaRDD<SingleRow> rdd){
 		JavaRDD<Row> rowRDD = rdd.map(new Function<SingleRow, Row>() {
 			private static final long serialVersionUID = 4965429980431362097L;
 
