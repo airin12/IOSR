@@ -39,13 +39,13 @@ public class SqlSparkJob extends AbstractSparkJob {
 	}
 
 	private Object executeSQLQuery(JavaRDD<SingleRow> rdd, String sql, SQLContext sqlContext, String metric, List<String> tagNames) {
-		String schemaString = "timestamp value cpu";
-
+		
 		List<StructField> fields = new ArrayList<StructField>();
-		String [] fieldsNames = schemaString.split(" ");
-		fields.add(DataTypes.createStructField(fieldsNames[0], DataTypes.LongType, true));
-		fields.add(DataTypes.createStructField(fieldsNames[1], DataTypes.DoubleType, true));
-		fields.add(DataTypes.createStructField(fieldsNames[2], DataTypes.StringType, true));
+		fields.add(DataTypes.createStructField("timestamp", DataTypes.LongType, true));
+		fields.add(DataTypes.createStructField("value", DataTypes.DoubleType, true));
+		for(String tag : tagNames)
+			fields.add(DataTypes.createStructField(tag, DataTypes.StringType, true));
+		
 		StructType schema = DataTypes.createStructType(fields);
 		
 		SparkSQLRDDExecutor executor = new SparkSQLRDDExecutor();

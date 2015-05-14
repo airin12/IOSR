@@ -27,6 +27,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
     {
 		Config config;
 		ConfigurationProvider configProvider;
+		LOGGER.info(" SparkJobRunner starting in mode: "+args[5]);
 		SparkJobRunnerModes mode = SparkJobRunnerModes.valueOf(args[5]);
 		
 		try {
