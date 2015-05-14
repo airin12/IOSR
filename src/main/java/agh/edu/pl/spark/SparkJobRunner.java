@@ -27,9 +27,8 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
     {
 		Config config;
 		ConfigurationProvider configProvider;
-		String mode = args[5];
-		LOGGER.debug(args[5]);
-		LOGGER.debug(args[6]);
+		SparkJobRunnerModes mode = SparkJobRunnerModes.valueOf(args[5]);
+		
 		try {
 			configProvider = new ConfigurationProvider(ConfigurationProvider.CONFIGURATION_FILENAME);
 			config = new Config(configProvider.getProperty(ConfigurationProvider.TSDB_CONFIG_FILENAME_PROPERTY_NAME));
@@ -47,30 +46,33 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 
 	        TSDBQueryParametrization queryParametrization = null;
 	        try{
-	        	if(mode.equals("function"))
+	        	if(mode.equals(SparkJobRunnerModes.BASIC))
 	        		queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(args[6]);
-	        	else if(mode.equals("json"))
-	        		queryParametrization = new TSDBQueryParametrizationBuilder().buildFromJson(args[6]);
+	        	else if(mode.equals(SparkJobRunnerModes.SQL))
+	        		queryParametrization = new TSDBQueryParametrizationBuilder().buildFromJson(args[6].replace(";", " "));
 
 	        } catch( Exception ex){
 	        	GrafanaService.resultMap.put("job","Error while creating TSDB query. Msg: "+ex.getMessage());
+	        	sparkContext.close();
 	        	return;
 	        }
 	        
 	        Object result = null;
-	        if(mode.equals("function")) {
+	        if(mode.equals(SparkJobRunnerModes.BASIC)) {
 				SparkJob job = getSparkJob(queryParametrization.getAggregator(), tsdb, sparkContext);
 				result = job.execute(queryParametrization);
 			}
-	        else if(mode.equals("json")) {
+	        else if(mode.equals(SparkJobRunnerModes.SQL)) {
 				result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
 			}
 	        
+	        sparkContext.stop();
+	        sparkContext.close();
 	        GrafanaService.resultMap.put("job", result);
 	        
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} 
     }
 
 	private static SparkJob getSparkJob(Aggregator aggregator, TSDB tsdb, JavaSparkContext sparkContext) {
