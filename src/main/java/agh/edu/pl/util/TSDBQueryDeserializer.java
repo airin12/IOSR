@@ -55,12 +55,16 @@ public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametr
 			tags.put(entry.getKey(), entry.getValue().getAsString());
 		}
 		
+		JsonElement jsonSqlElement = jsonQueryObject.get("sql");
+		String sql = jsonSqlElement.getAsString();
+		
 		TSDBQueryParametrization query = new TSDBQueryParametrization();
 		query.setAggregator(aggregator);
 		query.setEndTime(end);
 		query.setStartTime(start);
 		query.setMetric(metric);
 		query.setTags(tags);
+		query.setSql(sql);
 		return query;
 	}
 

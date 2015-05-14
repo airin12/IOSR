@@ -42,9 +42,10 @@ public class SqlSparkJob extends AbstractSparkJob {
 		String schemaString = "timestamp value cpu";
 
 		List<StructField> fields = new ArrayList<StructField>();
-		for (String fieldName : schemaString.split(" ")) {
-			fields.add(DataTypes.createStructField(fieldName, DataTypes.StringType, true));
-		}
+		String [] fieldsNames = schemaString.split(" ");
+		fields.add(DataTypes.createStructField(fieldsNames[0], DataTypes.LongType, true));
+		fields.add(DataTypes.createStructField(fieldsNames[1], DataTypes.DoubleType, true));
+		fields.add(DataTypes.createStructField(fieldsNames[2], DataTypes.StringType, true));
 		StructType schema = DataTypes.createStructType(fields);
 		
 		SparkSQLRDDExecutor executor = new SparkSQLRDDExecutor();
@@ -76,7 +77,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 
 		LOGGER.info(" Length: {}", matchingPoints.length);
 		SQLContext sqlContext = new SQLContext(sparkContext);
-		return executeSQLQuery(sparkContext.parallelize(rows), "SELECT * FROM rows", sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()));
+		return executeSQLQuery(sparkContext.parallelize(rows),queryParametrization.getSql(), sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()));
 	}
 	
 	private List<String> generateTagsListFromMap(Map<String,String> map){

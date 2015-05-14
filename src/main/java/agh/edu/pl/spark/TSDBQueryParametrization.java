@@ -10,6 +10,7 @@ public class TSDBQueryParametrization {
     private String metric;
     private Map<String, String> tags;
     private Aggregator aggregator;
+    private String sql;
 
     public long getStartTime() {
         return startTime;
@@ -49,6 +50,14 @@ public class TSDBQueryParametrization {
 
 	public void setAggregator(Aggregator aggregator) {
 		this.aggregator = aggregator;
+	}
+	
+	public String getSql() {
+		return sql;
+	}
+
+	public void setSql(String sql) {
+		this.sql = sql;
 	}
 
 	@Override
