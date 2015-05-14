@@ -6,11 +6,12 @@ import agh.edu.pl.util.ConfigurationProvider;
 import net.opentsdb.core.TSDB;
 
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 
 public class MinSparkJob extends AbstractSparkJob {
 
-    public MinSparkJob(final TSDB tsdb, final ConfigurationProvider configProvider){
-        super(tsdb, configProvider);
+    public MinSparkJob(final TSDB tsdb, final JavaSparkContext sparkContext){
+        super(tsdb, sparkContext);
     }
 
     @Override

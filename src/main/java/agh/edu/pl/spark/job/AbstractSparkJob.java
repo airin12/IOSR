@@ -20,11 +20,11 @@ import agh.edu.pl.util.ConfigurationProvider;
 public abstract class AbstractSparkJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(MinSparkJob.class);
     private final TSDB tsdb;
-    protected final ConfigurationProvider configProvider;
+    protected final JavaSparkContext sparkContext;
 
-    public AbstractSparkJob(final TSDB tsdb, final ConfigurationProvider configProvider){
+    public AbstractSparkJob(final TSDB tsdb, final JavaSparkContext sparkContext){
         this.tsdb = tsdb;
-        this.configProvider = configProvider;
+        this.sparkContext = sparkContext;
     }
 
     public Object execute(TSDBQueryParametrization queryParametrization){
@@ -36,16 +36,7 @@ public abstract class AbstractSparkJob {
         }
         LOGGER.info("Fetched {} points.", matchingPoints[0].aggregatedSize());
         List<Double> values = extractValues(matchingPoints[0]);
-        SparkConf conf = new SparkConf()
-                .setAppName(configProvider.getProperty(ConfigurationProvider.SPARK_APP_NAME_PROPERTY_NAME))
-                .setMaster(configProvider.getProperty(ConfigurationProvider.SPARK_MASTER_URL_PROPERTY_NAME))
-                .setJars(new String[]{configProvider.getProperty(ConfigurationProvider.SPARK_JAR_FILE_PROPERTY_NAME)});
-        JavaSparkContext context = new JavaSparkContext(conf);
-        try {
-            return execute(context.parallelize(values));
-        } finally {
-            context.close();
-        }
+        return execute(sparkContext.parallelize(values));
     }
 
     protected Query buildQuery(TSDBQueryParametrization queryParametrization) {
@@ -56,7 +47,7 @@ public abstract class AbstractSparkJob {
         return query;
     }
 
-    protected List<Double> extractValues(DataPoints matchingPoint) {
+    private List<Double> extractValues(DataPoints matchingPoint) {
         SeekableView iterator = matchingPoint.iterator();
         List<Double> values = new LinkedList<Double>();
         while(iterator.hasNext()){

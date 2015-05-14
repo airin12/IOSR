@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import agh.edu.pl.rest.GrafanaService;
 import agh.edu.pl.util.ConfigurationProvider;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 
 public class SparkJobRunner {
 
@@ -29,6 +31,16 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 			config = new Config(configProvider.getProperty(ConfigurationProvider.TSDB_CONFIG_FILENAME_PROPERTY_NAME));
 			//Thread-safe implementation of the TSDB client - we can use one instance per whole service
 	        TSDB tsdb = new TSDB(config);
+			SparkConf conf = new SparkConf()
+					.setAppName(configProvider.getProperty(ConfigurationProvider.SPARK_APP_NAME_PROPERTY_NAME))
+					.setMaster(configProvider.getProperty(ConfigurationProvider.SPARK_MASTER_URL_PROPERTY_NAME))
+					.setJars(new String[]{configProvider.getProperty(ConfigurationProvider.SPARK_JAR_FILE_PROPERTY_NAME)});
+
+			// According to Apache Spark JavaDoc for JavaSparkContext:
+			// "Only one SparkContext may be active per JVM. You must stop() the active SparkContext
+			// before creating a new one."
+			JavaSparkContext sparkContext = new JavaSparkContext(conf);
+
 	        TSDBQueryParametrization queryParametrization = null;
 	        try{
 	        	if(mode.equals("function"))
@@ -43,9 +55,9 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 	        
 	        Object result = null;
 	        if(mode.equals("function"))
-	        	result = new MinSparkJob(tsdb, configProvider).execute(queryParametrization);
+	        	result = new MinSparkJob(tsdb, sparkContext).execute(queryParametrization);
 	        else if(mode.equals("json"))
-	        	result = new SqlSparkJob(tsdb, configProvider).execute(queryParametrization);
+	        	result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
 	        
 	        GrafanaService.resultMap.put("job", result);
 	        

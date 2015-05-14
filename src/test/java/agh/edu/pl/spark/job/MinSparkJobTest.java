@@ -13,6 +13,8 @@ import net.opentsdb.core.Aggregators;
 import net.opentsdb.core.TSDB;
 import net.opentsdb.utils.Config;
 import agh.edu.pl.util.ConfigurationProvider;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 
 public class MinSparkJobTest {
     private static final String CONFIGURATION_FILENAME = "config.properties";
@@ -32,7 +34,16 @@ public class MinSparkJobTest {
                 .setMetric("sys.cpu.nice").build();
                 
         ConfigurationProvider configProvider = new ConfigurationProvider(CONFIGURATION_FILENAME);
-        Object result = new MinSparkJob(tsdb, configProvider).execute(queryParametrization);
+        SparkConf conf = new SparkConf()
+                .setAppName(configProvider.getProperty(ConfigurationProvider.SPARK_APP_NAME_PROPERTY_NAME))
+                .setMaster(configProvider.getProperty(ConfigurationProvider.SPARK_MASTER_URL_PROPERTY_NAME))
+                .setJars(new String[]{configProvider.getProperty(ConfigurationProvider.SPARK_JAR_FILE_PROPERTY_NAME)});
+
+        // According to Apache Spark JavaDoc for JavaSparkContext:
+        // "Only one SparkContext may be active per JVM. You must stop() the active SparkContext
+        // before creating a new one."
+        JavaSparkContext sparkContext = new JavaSparkContext(conf);
+        Object result = new MinSparkJob(tsdb, sparkContext).execute(queryParametrization);
         System.out.print("Result=" + result);
     }
 }

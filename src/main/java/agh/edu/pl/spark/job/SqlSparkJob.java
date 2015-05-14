@@ -31,8 +31,8 @@ public class SqlSparkJob extends AbstractSparkJob {
 
 	private static final Logger LOGGER = LogManager.getLogger(SqlSparkJob.class);
 
-	public SqlSparkJob(TSDB tsdb, ConfigurationProvider configProvider) {
-		super(tsdb, configProvider);
+	public SqlSparkJob(TSDB tsdb, JavaSparkContext sparkContext) {
+		super(tsdb, sparkContext);
 	}
 
 	@Override
@@ -77,16 +77,8 @@ public class SqlSparkJob extends AbstractSparkJob {
 		List<SingleRow> rows = parser.convertToSingleRows(matchingPoints, queryParametrization.getTags());
 
 		LOGGER.info(" Length: {}", matchingPoints.length);
-		SparkConf conf = new SparkConf().setAppName(configProvider.getProperty(ConfigurationProvider.SPARK_APP_NAME_PROPERTY_NAME))
-				.setMaster(configProvider.getProperty(ConfigurationProvider.SPARK_MASTER_URL_PROPERTY_NAME))
-				.setJars(new String[] { configProvider.getProperty(ConfigurationProvider.SPARK_JAR_FILE_PROPERTY_NAME) });
-		JavaSparkContext context = new JavaSparkContext(conf);
-		SQLContext sqlContext = new SQLContext(context);
-		try {
-			return executeSQLQuery(context.parallelize(rows), "SELECT * FROM rows", sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()));
-		} finally {
-			context.close();
-		}
+		SQLContext sqlContext = new SQLContext(sparkContext);
+		return executeSQLQuery(sparkContext.parallelize(rows), "SELECT * FROM rows", sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()));
 	}
 	
 	private List<String> generateTagsListFromMap(Map<String,String> map){

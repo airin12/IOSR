@@ -7,7 +7,6 @@ import java.util.Properties;
 public class ConfigurationProvider {
     private final Properties props;
 
-    
     public static final String SPARK_MASTER_URL_PROPERTY_NAME = "spark.master.url";
     public static final String SPARK_APP_NAME_PROPERTY_NAME = "spark.app.name";
     public static final String SPARK_JAR_FILE_PROPERTY_NAME = "spark.jar.file";
