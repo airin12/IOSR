@@ -44,29 +44,33 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 			// "Only one SparkContext may be active per JVM. You must stop() the active SparkContext
 			// before creating a new one."
 			JavaSparkContext sparkContext = new JavaSparkContext(conf);
+			try {
+				TSDBQueryParametrization queryParametrization = null;
+				try {
+					if (mode.equals("function"))
+						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(args[6]);
+					else if (mode.equals("json"))
+						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromJson(args[6]);
 
-	        TSDBQueryParametrization queryParametrization = null;
-	        try{
-	        	if(mode.equals("function"))
-	        		queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(args[6]);
-	        	else if(mode.equals("json"))
-	        		queryParametrization = new TSDBQueryParametrizationBuilder().buildFromJson(args[6]);
+				} catch (Exception ex) {
+					GrafanaService.resultMap.put("job", "Error while creating TSDB query. Msg: " + ex.getMessage());
+					return;
+				}
 
-	        } catch( Exception ex){
-	        	GrafanaService.resultMap.put("job","Error while creating TSDB query. Msg: "+ex.getMessage());
-	        	return;
-	        }
-	        
-	        Object result = null;
-	        if(mode.equals("function")) {
-				SparkJob job = getSparkJob(queryParametrization.getAggregator(), tsdb, sparkContext);
-				result = job.execute(queryParametrization);
+				Object result = null;
+				if (mode.equals("function")) {
+					SparkJob job = getSparkJob(queryParametrization.getAggregator(), tsdb, sparkContext);
+					result = job.execute(queryParametrization);
+				} else if (mode.equals("json")) {
+					result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
+				}
+
+				GrafanaService.resultMap.put("job", result);
+			} finally {
+				if (sparkContext != null) {
+					sparkContext.close();
+				}
 			}
-	        else if(mode.equals("json")) {
-				result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
-			}
-	        
-	        GrafanaService.resultMap.put("job", result);
 	        
 		} catch (IOException e) {
 			e.printStackTrace();
