@@ -50,5 +50,13 @@ public class TSDBQueryParametrization {
 	public void setAggregator(Aggregator aggregator) {
 		this.aggregator = aggregator;
 	}
+
+	@Override
+	public String toString() {
+		return "TSDBQueryParametrization [startTime=" + startTime + ", endTime=" + endTime + ", metric=" + metric + ", tags=" + tags + ", aggregator="
+				+ aggregator + "]";
+	}
     
+	
+	
 }

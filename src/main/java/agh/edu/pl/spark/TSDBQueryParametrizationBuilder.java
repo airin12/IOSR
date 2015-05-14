@@ -3,6 +3,11 @@ package agh.edu.pl.spark;
 import java.util.HashMap;
 import java.util.Map;
 
+import agh.edu.pl.util.TSDBQueryDeserializer;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import net.opentsdb.core.Aggregator;
 import net.opentsdb.core.Aggregators;
 
@@ -58,6 +63,14 @@ public class TSDBQueryParametrizationBuilder {
         queryParametrization.setAggregator(Aggregators.get(splittedQueryParameters[3]));
         queryParametrization.setTags(buildTagsMapFromString(splittedQueryParameters[4]));
         return queryParametrization;
+    }
+    
+    public TSDBQueryParametrization buildFromJson(String json){
+    	GsonBuilder gsonBuilder = new GsonBuilder();
+    	gsonBuilder.registerTypeAdapter(TSDBQueryParametrization.class, new TSDBQueryDeserializer());
+    	Gson gson = gsonBuilder.create();
+    	
+    	return gson.fromJson(json, TSDBQueryParametrization.class);
     }
     
     private Map<String,String> buildTagsMapFromString(String tags){

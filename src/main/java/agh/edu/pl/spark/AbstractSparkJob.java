@@ -18,11 +18,8 @@ import agh.edu.pl.util.ConfigurationProvider;
 
 public abstract class AbstractSparkJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(MinSparkJob.class);
-    private static final String SPARK_MASTER_URL_PROPERTY_NAME = "spark.master.url";
-    private static final String SPARK_APP_NAME_PROPERTY_NAME = "spark.app.name";
-    private static final String SPARK_JAR_FILE_PROPERTY_NAME = "spark.jar.file";
     private final TSDB tsdb;
-    private final ConfigurationProvider configProvider;
+    protected final ConfigurationProvider configProvider;
 
     public AbstractSparkJob(final TSDB tsdb, final ConfigurationProvider configProvider){
         this.tsdb = tsdb;
@@ -39,9 +36,9 @@ public abstract class AbstractSparkJob {
         LOGGER.info("Fetched {} points.", matchingPoints[0].aggregatedSize());
         List<Double> values = extractValues(matchingPoints[0]);
         SparkConf conf = new SparkConf()
-                .setAppName(configProvider.getProperty(SPARK_APP_NAME_PROPERTY_NAME))
-                .setMaster(configProvider.getProperty(SPARK_MASTER_URL_PROPERTY_NAME))
-                .setJars(new String[]{configProvider.getProperty(SPARK_JAR_FILE_PROPERTY_NAME)});
+                .setAppName(configProvider.getProperty(ConfigurationProvider.SPARK_APP_NAME_PROPERTY_NAME))
+                .setMaster(configProvider.getProperty(ConfigurationProvider.SPARK_MASTER_URL_PROPERTY_NAME))
+                .setJars(new String[]{configProvider.getProperty(ConfigurationProvider.SPARK_JAR_FILE_PROPERTY_NAME)});
         JavaSparkContext context = new JavaSparkContext(conf);
         try {
             return execute(context.parallelize(values));
@@ -50,7 +47,7 @@ public abstract class AbstractSparkJob {
         }
     }
 
-    private Query buildQuery(TSDBQueryParametrization queryParametrization) {
+    protected Query buildQuery(TSDBQueryParametrization queryParametrization) {
         Query query= tsdb.newQuery();
         query.setStartTime(queryParametrization.getStartTime());
         query.setEndTime(queryParametrization.getEndTime());
@@ -58,7 +55,7 @@ public abstract class AbstractSparkJob {
         return query;
     }
 
-    private List<Double> extractValues(DataPoints matchingPoint) {
+    protected List<Double> extractValues(DataPoints matchingPoint) {
         SeekableView iterator = matchingPoint.iterator();
         List<Double> values = new LinkedList<Double>();
         while(iterator.hasNext()){
