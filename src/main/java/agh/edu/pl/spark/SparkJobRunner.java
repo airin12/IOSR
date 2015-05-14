@@ -3,7 +3,11 @@ package agh.edu.pl.spark;
 import java.io.IOException;
 
 import agh.edu.pl.spark.job.MinSparkJob;
+import agh.edu.pl.spark.job.SparkJob;
 import agh.edu.pl.spark.job.SqlSparkJob;
+import agh.edu.pl.spark.job.SumSparkJob;
+import net.opentsdb.core.Aggregator;
+import net.opentsdb.core.Aggregators;
 import net.opentsdb.core.TSDB;
 import net.opentsdb.utils.Config;
 
@@ -54,10 +58,13 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 	        }
 	        
 	        Object result = null;
-	        if(mode.equals("function"))
-	        	result = new MinSparkJob(tsdb, sparkContext).execute(queryParametrization);
-	        else if(mode.equals("json"))
-	        	result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
+	        if(mode.equals("function")) {
+				SparkJob job = getSparkJob(queryParametrization.getAggregator(), tsdb, sparkContext);
+				result = job.execute(queryParametrization);
+			}
+	        else if(mode.equals("json")) {
+				result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
+			}
 	        
 	        GrafanaService.resultMap.put("job", result);
 	        
@@ -65,4 +72,12 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 			e.printStackTrace();
 		}
     }
+
+	private static SparkJob getSparkJob(Aggregator aggregator, TSDB tsdb, JavaSparkContext sparkContext) {
+		if (Aggregators.SUM.equals(aggregator)){
+			return new SumSparkJob(tsdb, sparkContext);
+		} else {
+			return new MinSparkJob(tsdb, sparkContext);
+		}
+	}
 }

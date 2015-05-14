@@ -1,6 +1,5 @@
 package agh.edu.pl.spark.job;
 
-import agh.edu.pl.util.ConfigurationProvider;
 import net.opentsdb.core.TSDB;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;

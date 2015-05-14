@@ -14,12 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.spark.deploy.SparkSubmit;
 
-import agh.edu.pl.spark.TSDBQueryParametrization;
-import agh.edu.pl.util.TSDBQueryDeserializer;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 @Path("/grafana")
 public class GrafanaService {
 

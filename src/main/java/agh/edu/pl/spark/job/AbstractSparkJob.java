@@ -9,15 +9,13 @@ import net.opentsdb.core.Query;
 import net.opentsdb.core.SeekableView;
 import net.opentsdb.core.TSDB;
 
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import agh.edu.pl.util.ConfigurationProvider;
 
-public abstract class AbstractSparkJob {
+public abstract class AbstractSparkJob implements SparkJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(MinSparkJob.class);
     private final TSDB tsdb;
     protected final JavaSparkContext sparkContext;
