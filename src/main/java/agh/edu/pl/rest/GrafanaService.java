@@ -31,7 +31,7 @@ public class GrafanaService {
 		if(combinedQuery == null)
 			return "Bad query";
 		
-		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.BASIC.toString()+" "+combinedQuery).split(" "));
+		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.BASIC.toString()+" "+combinedQuery).split(" "));
 		return resultMap.get("job").toString();
 
 	}
@@ -45,7 +45,7 @@ public class GrafanaService {
 		if(combinedQuery == null)
 			return "Bad query";
 		
-		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.BASIC.toString()+" "+combinedQuery).split(" "));
+		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.BASIC.toString()+" "+combinedQuery).split(" "));
 		return resultMap.get("job").toString();
 
 	}
@@ -54,7 +54,7 @@ public class GrafanaService {
 	@Path("/query")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String executeSparkJob(String json) {
-		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner  --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.SQL.toString()+" "+json.replace(" ", ";")).split(" "));
+		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.SQL.toString()+" "+json.replace(" ", ";")).split(" "));
 		return resultMap.get("job").toString();
 	}
 
