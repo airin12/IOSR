@@ -1,0 +1,74 @@
+package agh.edu.pl.util;
+
+import agh.edu.pl.model.SingleRow;
+import net.opentsdb.core.DataPoints;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import javax.xml.crypto.Data;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
+public class DataPointsConverterTest {
+
+    private DataPointsConverter converter;
+    private Map<String, String> tags;
+    @Mock private DataPoints mockedDataPoints;
+
+    @Before
+    public void setUp(){
+        converter = new DataPointsConverter();
+        tags = new HashMap<>();
+    }
+
+    @Test
+    public void shouldReturnEmptyListWhenDataPointsArrayIsEmpty(){
+        DataPoints[] dataPoints = new DataPoints[0];
+        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnListWithTwoElements(){
+        DataPoints[] dataPoints = new DataPoints[1];
+        dataPoints[0] = prepareMockedDataPoints(2);
+        when(mockedDataPoints.aggregatedSize()).thenReturn(2);
+
+        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags);
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void shouldReturnListWithSixElements(){
+        DataPoints[] dataPoints = new DataPoints[3];
+        dataPoints[0] = prepareMockedDataPoints(1);
+        dataPoints[1] = prepareMockedDataPoints(2);
+        dataPoints[2] = prepareMockedDataPoints(3);
+
+        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags);
+
+        assertEquals(6, result.size());
+    }
+
+    private DataPoints prepareMockedDataPoints(int numberOfElements){
+        DataPoints mockedDataPoints = mock(DataPoints.class);
+        when(mockedDataPoints.aggregatedSize()).thenReturn(numberOfElements);
+        for (int i = 0; i < numberOfElements; i++){
+            when(mockedDataPoints.timestamp(i)).thenReturn(i * 3L);
+            when(mockedDataPoints.doubleValue(i)).thenReturn(i * 3.0);
+        }
+
+        return mockedDataPoints;
+    }
+}
