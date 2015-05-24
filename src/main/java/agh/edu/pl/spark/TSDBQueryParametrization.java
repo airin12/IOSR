@@ -1,11 +1,14 @@
 package agh.edu.pl.spark;
 
+import java.io.Serializable;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.opentsdb.core.Aggregator;
 
-public class TSDBQueryParametrization {
-    private long startTime;
+public class TSDBQueryParametrization implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private long startTime;
     private long endTime;
     private String metric;
     private Map<String, String> tags;
@@ -66,6 +69,22 @@ public class TSDBQueryParametrization {
 				+ aggregator + "]";
 	}
     
-	
+	public String toCombinedQuery(){
+		String combinedQuery = startTime+":"+endTime+":"+metric+":"+aggregator.toString()+":";
+		boolean isFirst = true;
+		
+		for(Entry<String,String> entry : tags.entrySet()){
+			if(isFirst){
+				isFirst = false;
+			} else {
+				combinedQuery += ";";
+			}
+			
+			combinedQuery += entry.getKey()+"="+entry.getValue();
+				
+		}
+		
+		return combinedQuery;
+	}
 	
 }

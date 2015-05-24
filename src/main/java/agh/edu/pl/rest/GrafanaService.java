@@ -8,7 +8,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,9 +55,13 @@ public class GrafanaService {
 	@POST
 	@Path("/query")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String executeSparkJob(String json) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response executeSparkJob(String json) {
 		SparkSubmit.main(("--class agh.edu.pl.spark.SparkJobRunner --deploy-mode client --master spark://172.17.84.76:7077 /root/files/spark.jar "+SparkJobRunnerModes.SQL.toString()+" "+json.replace(" ", ";")).split(" "));
-		return resultMap.get("job").toString();
+		return Response.ok().entity(resultMap.get("job").toString())
+				.header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+				.build();
 	}
 
 	private String createCombinedQuery(String start, String end, String metric, String aggregator, String tags) {

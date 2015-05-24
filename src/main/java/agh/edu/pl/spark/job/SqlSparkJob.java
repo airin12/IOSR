@@ -1,17 +1,13 @@
 package agh.edu.pl.spark.job;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import agh.edu.pl.spark.SparkSQLRDDExecutor;
-import agh.edu.pl.spark.TSDBQueryParametrization;
-import net.opentsdb.core.DataPoints;
-import net.opentsdb.core.Query;
 import net.opentsdb.core.TSDB;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.DataFrame;
@@ -21,13 +17,13 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
-import agh.edu.pl.model.SingleRow;
-import agh.edu.pl.util.DataPointsConverter;
+import scala.Tuple2;
+import agh.edu.pl.spark.SparkSQLRDDExecutor;
+import agh.edu.pl.spark.TSDBQueryParametrization;
+import agh.edu.pl.util.ConfigurationProvider;
 import agh.edu.pl.util.RowConverter;
 
 public class SqlSparkJob extends AbstractSparkJob {
-
-	private static final Logger LOGGER = LogManager.getLogger(SqlSparkJob.class);
 
 	public SqlSparkJob(TSDB tsdb, JavaSparkContext sparkContext) {
 		super(tsdb, sparkContext);
@@ -38,7 +34,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 		return "";
 	}
 
-	private Object executeSQLQuery(JavaRDD<SingleRow> rdd, String sql, SQLContext sqlContext, String metric, List<String> tagNames) {
+	private Object executeSQLQuery(JavaPairRDD<Long,Long> rdd, String sql, SQLContext sqlContext, String metric, List<String> tagNames, String combinedQuery) {
 		
 		List<StructField> fields = new ArrayList<StructField>();
 		fields.add(DataTypes.createStructField("timestamp", DataTypes.LongType, true));
@@ -49,7 +45,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 		StructType schema = DataTypes.createStructType(fields);
 		
 		SparkSQLRDDExecutor executor = new SparkSQLRDDExecutor();
-		JavaRDD<Row> rowRDD = executor.execute(rdd);
+		JavaRDD<Row> rowRDD = executor.loadTSDBData(rdd,combinedQuery);
 
 		DataFrame rowsDataFrame = sqlContext.createDataFrame(rowRDD, schema);
 		rowsDataFrame.registerTempTable("rows");
@@ -65,21 +61,46 @@ public class SqlSparkJob extends AbstractSparkJob {
 
 	@Override
 	public Object execute(TSDBQueryParametrization queryParametrization) {
-		Query query = buildQuery(queryParametrization);
-		DataPoints[] matchingPoints = query.run();
-		if (matchingPoints.length == 0) {
-			LOGGER.info("No matching points for query found. Returning 0.0");
-			return 0.0;
-		}
-
-		DataPointsConverter parser = new DataPointsConverter();
-		List<SingleRow> rows = parser.convertToSingleRows(matchingPoints, queryParametrization.getTags());
-
-		LOGGER.info(" Length: {}", matchingPoints.length);
 		SQLContext sqlContext = new SQLContext(sparkContext);
-		return executeSQLQuery(sparkContext.parallelize(rows),queryParametrization.getSql(), sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()));
+		
+		ConfigurationProvider configProvider;
+		int numSlices = 1;
+		
+		try {
+			configProvider = new ConfigurationProvider(ConfigurationProvider.CONFIGURATION_FILENAME);
+			numSlices = Integer.parseInt(configProvider.getProperty(ConfigurationProvider.SPARK_SLAVES_NUMBER_PROPERTY_NAME));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		List<Tuple2<Long,Long>> timestamps = generateTimestampsList(queryParametrization.getStartTime(),queryParametrization.getEndTime(), numSlices);
+		
+		return executeSQLQuery(sparkContext.parallelizePairs(timestamps, numSlices),queryParametrization.getSql(), sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()),queryParametrization.toCombinedQuery());
 	}
 	
+	private List<Tuple2<Long, Long>> generateTimestampsList(long startTime, long endTime, int slices) {
+		List<Tuple2<Long, Long>> timestamps = new ArrayList<Tuple2<Long, Long>>();
+		
+		long diff = (endTime - startTime) / slices;
+		long actualTimestamp = startTime;
+		
+		while(actualTimestamp < endTime){
+			Long start = new Long(actualTimestamp);
+			Long end;
+			
+			if(actualTimestamp + diff > endTime)
+				end = new Long(endTime);
+			else
+				end = new Long(actualTimestamp + diff);
+			
+			actualTimestamp += diff + 1;
+			
+			timestamps.add(new Tuple2<Long, Long>(start, end));
+		}
+		
+		return timestamps;
+	}
+
 	private List<String> generateTagsListFromMap(Map<String,String> map){
 		Object [] tagsArray =  map.keySet().toArray();
 		List<String> tagsList = new ArrayList<String>();

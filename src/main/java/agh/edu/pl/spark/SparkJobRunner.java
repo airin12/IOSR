@@ -2,10 +2,6 @@ package agh.edu.pl.spark;
 
 import java.io.IOException;
 
-import agh.edu.pl.spark.job.MinSparkJob;
-import agh.edu.pl.spark.job.SparkJob;
-import agh.edu.pl.spark.job.SqlSparkJob;
-import agh.edu.pl.spark.job.SumSparkJob;
 import net.opentsdb.core.Aggregator;
 import net.opentsdb.core.Aggregators;
 import net.opentsdb.core.TSDB;
@@ -13,11 +9,15 @@ import net.opentsdb.utils.Config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import agh.edu.pl.rest.GrafanaService;
-import agh.edu.pl.util.ConfigurationProvider;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+
+import agh.edu.pl.rest.GrafanaService;
+import agh.edu.pl.spark.job.MinSparkJob;
+import agh.edu.pl.spark.job.SparkJob;
+import agh.edu.pl.spark.job.SqlSparkJob;
+import agh.edu.pl.spark.job.SumSparkJob;
+import agh.edu.pl.util.ConfigurationProvider;
 
 public class SparkJobRunner {
 
@@ -27,8 +27,9 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
     {
 		Config config;
 		ConfigurationProvider configProvider;
-		LOGGER.info(" SparkJobRunner starting in mode: "+args[5]);
-		SparkJobRunnerModes mode = SparkJobRunnerModes.valueOf(args[5]);
+
+		LOGGER.info(" SparkJobRunner starting in mode: {}",args[0]);
+		SparkJobRunnerModes mode = SparkJobRunnerModes.valueOf(args[0]);
 		
 		try {
 			configProvider = new ConfigurationProvider(ConfigurationProvider.CONFIGURATION_FILENAME);
@@ -39,7 +40,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 					.setAppName(configProvider.getProperty(ConfigurationProvider.SPARK_APP_NAME_PROPERTY_NAME))
 					.setMaster(configProvider.getProperty(ConfigurationProvider.SPARK_MASTER_URL_PROPERTY_NAME))
 					.setJars(new String[]{configProvider.getProperty(ConfigurationProvider.SPARK_JAR_FILE_PROPERTY_NAME)});
-
+	
 			// According to Apache Spark JavaDoc for JavaSparkContext:
 			// "Only one SparkContext may be active per JVM. You must stop() the active SparkContext
 			// before creating a new one."
@@ -48,9 +49,9 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 				TSDBQueryParametrization queryParametrization = null;
 				try {
 					if (mode.equals(SparkJobRunnerModes.BASIC))
-						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(args[6]);
+						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(args[1]);
 					else if (mode.equals(SparkJobRunnerModes.SQL))
-						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromJson(args[6].replace(";", " "));
+						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromJson(args[1].replace(";", " "));
 
 				} catch (Exception ex) {
 					GrafanaService.resultMap.put("job", "Error while creating TSDB query. Msg: " + ex.getMessage());
@@ -64,7 +65,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 					result = job.execute(queryParametrization);
 				} else if (mode.equals(SparkJobRunnerModes.SQL)) {
 					result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
-				}
+				} 
 				GrafanaService.resultMap.put("job", result);
 			} finally {
 				if (sparkContext != null){
