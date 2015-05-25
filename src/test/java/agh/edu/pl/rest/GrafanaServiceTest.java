@@ -1,17 +1,18 @@
 package agh.edu.pl.rest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.powermock.api.mockito.PowerMockito.doNothing;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+
 import org.apache.spark.deploy.SparkSubmit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SparkSubmit.class)
@@ -54,12 +55,12 @@ public class GrafanaServiceTest {
     }
 
     @Test
-    public void shouldReturnNullWhenAnyArgumentIsNull(){
+    public void shouldReturnBadQueryWhenAnyArgumentIsNull(){
         String result = grafanaService.executeSparkJob(JOB_START, JOB_END, null, AGGREGATOR, TAGS);
-        assertNull(result);
+        assertEquals(result,"Bad query");
         result = grafanaService.executeSparkJob(JOB_START, null, METRIC, AGGREGATOR, TAGS);
-        assertNull(result);
+        assertEquals(result,"Bad query");
         result = grafanaService.executeSparkJob(JOB_START, JOB_END, METRIC, null, TAGS);
-        assertNull(result);
+        assertEquals(result,"Bad query");
     }
 }

@@ -1,14 +1,14 @@
 package agh.edu.pl.util;
 
-import org.apache.spark.sql.Row;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.apache.spark.sql.Row;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RowConverterTest {
     private static final String EXPECTED_JSON = "[{\"metric\":\"metric\",\"tags\":{\"tag\":\"tag\"},\"aggregateTags\":[],\"dps\":{\"5\":10.0}}]";
@@ -34,13 +34,13 @@ public class RowConverterTest {
 
     @Test
     public void shouldConvert(){
-        String result = rowConverter.convertToJSONString(Arrays.asList(mockedRow), Arrays.asList(TAG), METRIC);
+        String result = rowConverter.convertToJSONString(Arrays.asList(mockedRow), Arrays.asList(TAG), METRIC, new SparkSQLAnalyzer("select * from rows",Arrays.asList(TAG)).analyze());
         assertEquals(EXPECTED_JSON, result);
     }
 
     @Test
     public void shouldConvertTwoRows(){
-        String result = rowConverter.convertToJSONString(Arrays.asList(mockedRow, mockedRow2), Arrays.asList(TAG), METRIC);
+        String result = rowConverter.convertToJSONString(Arrays.asList(mockedRow, mockedRow2), Arrays.asList(TAG), METRIC, new SparkSQLAnalyzer("select * from rows",Arrays.asList(TAG)).analyze());
         assertEquals(EXPECTED_JSON_WITH_TWO_ROWS, result);
     }
 }

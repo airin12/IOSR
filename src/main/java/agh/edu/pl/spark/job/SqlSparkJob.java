@@ -22,6 +22,7 @@ import agh.edu.pl.spark.SparkSQLRDDExecutor;
 import agh.edu.pl.spark.TSDBQueryParametrization;
 import agh.edu.pl.util.ConfigurationProvider;
 import agh.edu.pl.util.RowConverter;
+import agh.edu.pl.util.SparkSQLAnalyzer;
 
 public class SqlSparkJob extends AbstractSparkJob {
 
@@ -34,11 +35,11 @@ public class SqlSparkJob extends AbstractSparkJob {
 		return "";
 	}
 
-	private Object executeSQLQuery(JavaPairRDD<Long,Long> rdd, String sql, SQLContext sqlContext, String metric, List<String> tagNames, String combinedQuery) {
+	private Object executeSQLQuery(JavaPairRDD<Long,Long> rdd, String sql, SQLContext sqlContext, String metric, List<String> tagNames, String combinedQuery, SparkSQLAnalyzer analyzer) {
 		
 		List<StructField> fields = new ArrayList<StructField>();
-		fields.add(DataTypes.createStructField("timestamp", DataTypes.LongType, true));
-		fields.add(DataTypes.createStructField("value", DataTypes.DoubleType, true));
+		fields.add(DataTypes.createStructField(SparkSQLAnalyzer.SPARK_SQL_TIMESTAMP_COLUMN, DataTypes.LongType, true));
+		fields.add(DataTypes.createStructField(SparkSQLAnalyzer.SPARK_SQL_VALUE_COLUMN, DataTypes.DoubleType, true));
 		for(String tag : tagNames)
 			fields.add(DataTypes.createStructField(tag, DataTypes.StringType, true));
 		
@@ -48,7 +49,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 		JavaRDD<Row> rowRDD = executor.loadTSDBData(rdd,combinedQuery);
 
 		DataFrame rowsDataFrame = sqlContext.createDataFrame(rowRDD, schema);
-		rowsDataFrame.registerTempTable("rows");
+		rowsDataFrame.registerTempTable(SparkSQLAnalyzer.SPARK_SQL_TABLENAME);
 		
 		DataFrame results = sqlContext.sql(sql);
 		JavaRDD<Row> resultRows = results.javaRDD();
@@ -56,11 +57,17 @@ public class SqlSparkJob extends AbstractSparkJob {
 		
 		RowConverter converter = new RowConverter();
 
-		return converter.convertToJSONString(valuesInList, tagNames, metric);
+		return converter.convertToJSONString(valuesInList, tagNames, metric, analyzer);
 	}
 
 	@Override
 	public Object execute(TSDBQueryParametrization queryParametrization) {
+		
+		String sql = queryParametrization.getSql();
+		SparkSQLAnalyzer analyzer = new SparkSQLAnalyzer(sql, generateTagsListFromMap(queryParametrization.getTags())).analyze();
+		if(!analyzer.isProperSql())
+			return new String("invalid SQL format");
+		
 		SQLContext sqlContext = new SQLContext(sparkContext);
 		
 		ConfigurationProvider configProvider;
@@ -75,7 +82,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 		
 		List<Tuple2<Long,Long>> timestamps = generateTimestampsList(queryParametrization.getStartTime(),queryParametrization.getEndTime(), numSlices);
 		
-		return executeSQLQuery(sparkContext.parallelizePairs(timestamps, numSlices),queryParametrization.getSql(), sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()),queryParametrization.toCombinedQuery());
+		return executeSQLQuery(sparkContext.parallelizePairs(timestamps, numSlices),queryParametrization.getSql(), sqlContext, queryParametrization.getMetric(),generateTagsListFromMap(queryParametrization.getTags()),queryParametrization.toCombinedQuery(),analyzer);
 	}
 	
 	private List<Tuple2<Long, Long>> generateTimestampsList(long startTime, long endTime, int slices) {
