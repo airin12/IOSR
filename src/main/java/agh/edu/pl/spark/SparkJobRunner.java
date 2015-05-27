@@ -55,6 +55,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 
 				} catch (Exception ex) {
 					GrafanaService.resultMap.put("job", "Error while creating TSDB query. Msg: " + ex.getMessage());
+					LOGGER.error("Exception while creating TSDB query",ex);
 					sparkContext.close();
 					return;
 				}
@@ -66,6 +67,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 				} else if (mode.equals(SparkJobRunnerModes.SQL)) {
 					result = new SqlSparkJob(tsdb, sparkContext).execute(queryParametrization);
 				} 
+				LOGGER.debug(" Result of operation is: {}",result);
 				GrafanaService.resultMap.put("job", result);
 			} finally {
 				if (sparkContext != null){

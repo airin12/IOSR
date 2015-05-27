@@ -49,7 +49,7 @@ public class GrafanaServiceTest {
 
     @Test
     public void shoudCallSparkSumbitMainWithJson(){
-        grafanaService.executeSparkJob(JSON);
+        grafanaService.executeSparkJob(JSON, null);
         verifyStatic();
         SparkSubmit.main(EXPECTED_ARGUMENTS_JSON);
     }

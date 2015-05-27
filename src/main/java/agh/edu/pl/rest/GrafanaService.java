@@ -59,10 +59,13 @@ public class GrafanaService {
 	@Path("/query")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response executeSparkJob(String json) {
+	public Response executeSparkJob(String json, @HeaderParam("Access-Control-Request-Headers") String requestHeader) {
 		ResponseBuilder builder = submitSparkJob(json);
 		builder.header("Access-Control-Allow-Origin", "*")
 			   .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+		
+		if(requestHeader != null && requestHeader.length() > 0)
+			builder.header("Access-Control-Allow-Headers", requestHeader);
 
 		return builder.build();
 	}

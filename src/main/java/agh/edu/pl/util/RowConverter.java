@@ -23,6 +23,10 @@ public class RowConverter {
 			
 			for(Row row : rows){
 				Long timestamp = row.getLong(indexes.get(SparkSQLAnalyzer.SPARK_SQL_TIMESTAMP_COLUMN));
+				
+				if(timestamp.toString().length() == 13)
+					timestamp /= 1000;
+				
 				Double value = row.getDouble(indexes.get(SparkSQLAnalyzer.SPARK_SQL_VALUE_COLUMN));
 				List<String> tags = new ArrayList<String>();
 				

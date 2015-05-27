@@ -1,6 +1,7 @@
 package agh.edu.pl.util;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,7 +28,7 @@ public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametr
 	
 	public TSDBQueryParametrization deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
 		
-		LOGGER.info("Deserializing json");
+		LOGGER.info("Deserializing json {}", json);
 		
 		JsonObject jsonObject = json.getAsJsonObject();
 		
@@ -35,7 +36,17 @@ public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametr
 		long start = jsonStart.getAsLong();
 		
 		JsonElement jsonEnd = jsonObject.get("end");
-		long end = jsonEnd.getAsLong();
+		
+		long end = 0;
+		if(jsonEnd == null)
+			end = new Date().getTime() / 1000;
+		else
+			end = jsonEnd.getAsLong();
+		
+		if(String.valueOf(start).length() == 13)
+			start /= 1000;
+		if(String.valueOf(end).length() == 13)
+			end /= 1000;
 		
 		JsonArray jsonQueriesArray = jsonObject.get("queries").getAsJsonArray();
 		
@@ -52,13 +63,21 @@ public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametr
 		JsonElement jsonTagsElement = jsonQueryObject.get("tags");
 		JsonObject jsonTagsObject = jsonTagsElement.getAsJsonObject();
 		
+		JsonElement jsonPossibleSqlElement = jsonQueryObject.get("sql");
+		
 		Map<String,String> tags = new HashMap<String,String>();
 		for(Entry<String,JsonElement> entry :  jsonTagsObject.entrySet()){
 			tags.put(entry.getKey(), entry.getValue().getAsString());
 		}
 		
 		JsonElement jsonSqlElement = jsonQueryObject.get("sql");
-		String sql = jsonSqlElement.getAsString();
+		String sql = null;
+		
+		if(jsonSqlElement != null)
+			sql = jsonSqlElement.getAsString();
+		else if(jsonPossibleSqlElement != null){
+			sql = jsonPossibleSqlElement.getAsJsonObject().getAsString();
+		}
 		
 		TSDBQueryParametrization query = new TSDBQueryParametrization();
 		query.setAggregator(aggregator);
