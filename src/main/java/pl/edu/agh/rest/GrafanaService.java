@@ -1,7 +1,10 @@
 package pl.edu.agh.rest;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -26,7 +29,9 @@ import pl.edu.agh.spark.SparkJobRunnerModes;
 public class GrafanaService {
 
 	public static final Logger LOGGER = LogManager.getLogger(GrafanaService.class);
-	public static Map<String, Object> resultMap = new HashMap<String, Object>();
+	public static Map<String, Object> resultMap = Collections.synchronizedMap(new HashMap<String, Object>());
+	
+	private Random random = new Random(new Date().getTime());
 
 	@GET
 	@Path("/query/{start}/{end}/{metric}/{aggregator}/{tags}")
@@ -37,16 +42,19 @@ public class GrafanaService {
 		if(combinedQuery == null)
 			return "Bad query";
 		
+		String id = String.valueOf(random.nextInt());
+		
 		String [] args = {"--class",
 						  "pl.edu.agh.spark.SparkJobRunner",
 						  "--deploy-mode",
 						  "client",
 						  "",
 						  SparkJobRunnerModes.BASIC.toString(),
-						  combinedQuery};
+						  combinedQuery,
+						  id};
 		
 		SparkSubmit.main(args);
-		return resultMap.get("job").toString();
+		return resultMap.get(id).toString();
 
 	}
 	
@@ -59,16 +67,19 @@ public class GrafanaService {
 		if(combinedQuery == null)
 			return "Bad query";
 		
+		String id = String.valueOf(random.nextInt());
+		
 		String [] args = {"--class",
 				  "pl.edu.agh.spark.SparkJobRunner",
 				  "--deploy-mode",
 				  "client",
 				  "",
 				  SparkJobRunnerModes.BASIC.toString(),
-				  combinedQuery};
+				  combinedQuery,
+				  id};
 
 		SparkSubmit.main(args);
-		return resultMap.get("job").toString();
+		return resultMap.get(id).toString();
 
 	}
 	
@@ -81,16 +92,19 @@ public class GrafanaService {
 		if(combinedQuery == null)
 			return "Bad query";
 		
+		String id = String.valueOf(random.nextInt());
+		
 		String [] args = {"--class",
 				  "pl.edu.agh.spark.SparkJobRunner",
 				  "--deploy-mode",
 				  "client",
 				  "",
 				  SparkJobRunnerModes.TEST.toString(),
-				  combinedQuery};
+				  combinedQuery,
+				  id};
 
 		SparkSubmit.main(args);
-		return resultMap.get("job").toString();
+		return resultMap.get(id).toString();
 
 	}
 	
@@ -132,16 +146,19 @@ public class GrafanaService {
 	
 	private ResponseBuilder submitSparkJob(String json){
 		
+		String id = String.valueOf(random.nextInt());
+		
 		String [] args = {"--class",
 				  "pl.edu.agh.spark.SparkJobRunner",
 				  "--deploy-mode",
 				  "client",
 				  "",
 				  SparkJobRunnerModes.SQL.toString(),
-				  json};
+				  json,
+				  id};
 
 		SparkSubmit.main(args);
-		return Response.ok().entity(resultMap.get("job").toString());
+		return Response.ok().entity(resultMap.get(id).toString());
 	}
 
 	private String createCombinedQuery(String start, String end, String metric, String aggregator, String tags) {

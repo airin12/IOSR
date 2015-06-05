@@ -48,7 +48,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 						queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(args[1]);
 					
 				} catch (Exception ex) {
-					GrafanaService.resultMap.put("job", "Error while creating TSDB query. Msg: " + ex.getMessage());
+					GrafanaService.resultMap.put(args[2], "Error while creating TSDB query. Msg: " + ex.getMessage());
 					LOGGER.error("Exception while creating TSDB query",ex);
 					return;
 				}
@@ -64,7 +64,7 @@ private static final Logger LOGGER = LogManager.getLogger(SparkJobRunner.class);
 				}
 				
 				LOGGER.debug(" Result of operation is: {}",result);
-				GrafanaService.resultMap.put("job", result);
+				GrafanaService.resultMap.put(args[2], result);
 			} catch (Exception ex){
 				LOGGER.error("Exception while executing job",ex);
 			}
