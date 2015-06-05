@@ -9,15 +9,16 @@ import java.util.TreeMap;
 import org.apache.spark.sql.Row;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class RowConverter {
 	
 	
-	public String convertToJSONString(List<Row> rows, List<String> tagNames, String metric, SparkSQLAnalyzer analyzer){
+	public JsonElement convertToJSONElement(List<Row> rows, List<String> tagNames, String metric, SparkSQLAnalyzer analyzer, JsonElement result){
 		
 		if(analyzer.getResultType().equals(SparkSQLAnalyzer.ResultTypes.GRAPH)){
-			JsonArray mainJsonArray = new JsonArray();
+			JsonArray mainJsonArray = result.getAsJsonArray();
 			Map<String,JsonObject> dataForEachTagMap = new TreeMap<String,JsonObject>();
 			Map<String,Integer> indexes = analyzer.getResultIndexesMap();
 			
@@ -68,7 +69,8 @@ public class RowConverter {
 				mainJsonArray.add(entry.getValue());
 			}
 			
-			return mainJsonArray.toString();
+			return mainJsonArray;
+			
 		} else {
 			JsonArray mainJsonArray = new JsonArray();
 			List<String> columns = analyzer.getResultColumnNames();
@@ -88,7 +90,9 @@ public class RowConverter {
 				mainJsonArray.add(rowObject);
 			}
 			
-			return mainJsonArray.toString();
+			JsonArray newResult = result.getAsJsonArray();
+			newResult.add(mainJsonArray);
+			return newResult;
 		}
 	}
 

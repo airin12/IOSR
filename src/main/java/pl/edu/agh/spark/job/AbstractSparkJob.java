@@ -1,7 +1,9 @@
 package pl.edu.agh.spark.job;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.opentsdb.core.DataPoints;
 import net.opentsdb.core.Query;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pl.edu.agh.spark.TSDBQueryParametrization;
+import scala.Tuple2;
 
 
 public abstract class AbstractSparkJob implements SparkJob {
@@ -56,4 +59,37 @@ public abstract class AbstractSparkJob implements SparkJob {
     }
 
     protected abstract Object execute(JavaRDD<Double> rdd);
+    
+    protected List<Tuple2<Long, Long>> generateTimestampsList(long startTime, long endTime, int slices) {
+		List<Tuple2<Long, Long>> timestamps = new ArrayList<Tuple2<Long, Long>>();
+
+		long diff = (endTime - startTime) / slices;
+		long actualTimestamp = startTime;
+
+		while (actualTimestamp < endTime) {
+			Long start = new Long(actualTimestamp);
+			Long end;
+
+			if (actualTimestamp + diff > endTime)
+				end = new Long(endTime);
+			else
+				end = new Long(actualTimestamp + diff);
+
+			actualTimestamp += diff + 1;
+
+			timestamps.add(new Tuple2<Long, Long>(start, end));
+		}
+
+		return timestamps;
+	}
+
+	protected List<String> generateTagsListFromMap(Map<String, String> map) {
+		Object[] tagsArray = map.keySet().toArray();
+		List<String> tagsList = new ArrayList<String>();
+
+		for (Object tag : tagsArray)
+			tagsList.add(tag.toString());
+
+		return tagsList;
+	}
 }

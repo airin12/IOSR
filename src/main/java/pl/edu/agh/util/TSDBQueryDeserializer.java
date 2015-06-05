@@ -1,8 +1,10 @@
 package pl.edu.agh.util;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,12 +23,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametrization>{
+public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametrization[]>{
 
 	private static final Logger LOGGER = LogManager.getLogger(TSDBQueryDeserializer.class); 
 	
 	
-	public TSDBQueryParametrization deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+	public TSDBQueryParametrization[] deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+		
+		List<TSDBQueryParametrization> queriesParametrizationList = new ArrayList<>();
 		
 		LOGGER.info("Deserializing json {}", json);
 		
@@ -50,43 +54,48 @@ public class TSDBQueryDeserializer implements JsonDeserializer<TSDBQueryParametr
 		
 		JsonArray jsonQueriesArray = jsonObject.get("queries").getAsJsonArray();
 		
-		// many queries not supported
-		JsonElement jsonQueryElement = jsonQueriesArray.get(0);
-		JsonObject jsonQueryObject = jsonQueryElement.getAsJsonObject();
-		
-		JsonElement jsonMetric = jsonQueryObject.get("metric");
-		String metric = jsonMetric.getAsString();
-		
-		JsonElement jsonAggregator = jsonQueryObject.get("aggregator");
-		Aggregator aggregator = Aggregators.get(jsonAggregator.getAsString());
-		
-		JsonElement jsonTagsElement = jsonQueryObject.get("tags");
-		JsonObject jsonTagsObject = jsonTagsElement.getAsJsonObject();
-		
-		JsonElement jsonPossibleSqlElement = jsonQueryObject.get("sql");
-		
-		Map<String,String> tags = new HashMap<String,String>();
-		for(Entry<String,JsonElement> entry :  jsonTagsObject.entrySet()){
-			tags.put(entry.getKey(), entry.getValue().getAsString());
+		for(JsonElement jsonQuery : jsonQueriesArray){
+			// many queries not supported
+			JsonElement jsonQueryElement = jsonQuery;
+			JsonObject jsonQueryObject = jsonQueryElement.getAsJsonObject();
+			
+			JsonElement jsonMetric = jsonQueryObject.get("metric");
+			String metric = jsonMetric.getAsString();
+			
+			JsonElement jsonAggregator = jsonQueryObject.get("aggregator");
+			Aggregator aggregator = Aggregators.get(jsonAggregator.getAsString());
+			
+			JsonElement jsonTagsElement = jsonQueryObject.get("tags");
+			JsonObject jsonTagsObject = jsonTagsElement.getAsJsonObject();
+			
+			JsonElement jsonPossibleSqlElement = jsonQueryObject.get("sql");
+			
+			Map<String,String> tags = new HashMap<String,String>();
+			for(Entry<String,JsonElement> entry :  jsonTagsObject.entrySet()){
+				tags.put(entry.getKey(), entry.getValue().getAsString());
+			}
+			
+			JsonElement jsonSqlElement = jsonQueryObject.get("sql");
+			String sql = null;
+			
+			if(jsonSqlElement != null)
+				sql = jsonSqlElement.getAsString();
+			else if(jsonPossibleSqlElement != null){
+				sql = jsonPossibleSqlElement.getAsJsonObject().getAsString();
+			}
+			
+			TSDBQueryParametrization query = new TSDBQueryParametrization();
+			query.setAggregator(aggregator);
+			query.setEndTime(end);
+			query.setStartTime(start);
+			query.setMetric(metric);
+			query.setTags(tags);
+			query.setSql(sql);
+			queriesParametrizationList.add(query);
 		}
 		
-		JsonElement jsonSqlElement = jsonQueryObject.get("sql");
-		String sql = null;
 		
-		if(jsonSqlElement != null)
-			sql = jsonSqlElement.getAsString();
-		else if(jsonPossibleSqlElement != null){
-			sql = jsonPossibleSqlElement.getAsJsonObject().getAsString();
-		}
-		
-		TSDBQueryParametrization query = new TSDBQueryParametrization();
-		query.setAggregator(aggregator);
-		query.setEndTime(end);
-		query.setStartTime(start);
-		query.setMetric(metric);
-		query.setTags(tags);
-		query.setSql(sql);
-		return query;
+		return queriesParametrizationList.toArray(new TSDBQueryParametrization[queriesParametrizationList.size()]);
 	}
 
 }

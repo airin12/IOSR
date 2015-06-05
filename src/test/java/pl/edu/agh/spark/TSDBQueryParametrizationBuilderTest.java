@@ -27,26 +27,26 @@ public class TSDBQueryParametrizationBuilderTest {
 
     @Test
     public void shouldBuildStartTimeFromJson(){
-        TSDBQueryParametrization parametrization = builder.buildFromJson(JSON);
-        assertTrue(EXPECTED_START_TIME == parametrization.getStartTime());
+        TSDBQueryParametrization[] parametrization = builder.buildFromJson(JSON);
+        assertTrue(EXPECTED_START_TIME == parametrization[0].getStartTime());
     }
 
     @Test
     public void shouldBuildEndTimeFromJson(){
-        TSDBQueryParametrization parametrization = builder.buildFromJson(JSON);
-        assertTrue(EXPECTED_END_TIME == parametrization.getEndTime());
+        TSDBQueryParametrization[] parametrization = builder.buildFromJson(JSON);
+        assertTrue(EXPECTED_END_TIME == parametrization[0].getEndTime());
     }
 
     @Test
     public void shouldBuildMetricFromJson(){
-        TSDBQueryParametrization parametrization = builder.buildFromJson(JSON);
-        assertEquals(EXPECTED_METRIC, parametrization.getMetric());
+        TSDBQueryParametrization[] parametrization = builder.buildFromJson(JSON);
+        assertEquals(EXPECTED_METRIC, parametrization[0].getMetric());
     }
 
     @Test
     public void shouldBuildAggregatorFromJson(){
-        TSDBQueryParametrization parametrization = builder.buildFromJson(JSON);
-        assertEquals(EXPECTED_AGGREGATOR, parametrization.getAggregator());
+        TSDBQueryParametrization[] parametrization = builder.buildFromJson(JSON);
+        assertEquals(EXPECTED_AGGREGATOR, parametrization[0].getAggregator());
     }
 
     @Test

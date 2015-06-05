@@ -10,6 +10,8 @@ import org.apache.spark.sql.Row;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.JsonArray;
+
 import pl.edu.agh.util.RowConverter;
 import pl.edu.agh.util.SparkSQLAnalyzer;
 
@@ -37,13 +39,13 @@ public class RowConverterTest {
 
     @Test
     public void shouldConvert(){
-        String result = rowConverter.convertToJSONString(Arrays.asList(mockedRow), Arrays.asList(TAG), METRIC, new SparkSQLAnalyzer("select * from rows",Arrays.asList(TAG)).analyze());
+        String result = rowConverter.convertToJSONElement(Arrays.asList(mockedRow), Arrays.asList(TAG), METRIC, new SparkSQLAnalyzer("select * from rows",Arrays.asList(TAG)).analyze(),new JsonArray()).toString();
         assertEquals(EXPECTED_JSON, result);
     }
 
     @Test
     public void shouldConvertTwoRows(){
-        String result = rowConverter.convertToJSONString(Arrays.asList(mockedRow, mockedRow2), Arrays.asList(TAG), METRIC, new SparkSQLAnalyzer("select * from rows",Arrays.asList(TAG)).analyze());
+        String result = rowConverter.convertToJSONElement(Arrays.asList(mockedRow, mockedRow2), Arrays.asList(TAG), METRIC, new SparkSQLAnalyzer("select * from rows",Arrays.asList(TAG)).analyze(),new JsonArray()).toString();
         assertEquals(EXPECTED_JSON_WITH_TWO_ROWS, result);
     }
 }

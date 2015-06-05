@@ -3,13 +3,12 @@ package pl.edu.agh.spark;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.opentsdb.core.Aggregator;
+import net.opentsdb.core.Aggregators;
 import pl.edu.agh.util.TSDBQueryDeserializer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import net.opentsdb.core.Aggregator;
-import net.opentsdb.core.Aggregators;
 
 public class TSDBQueryParametrizationBuilder {
     private long startTime;
@@ -65,12 +64,12 @@ public class TSDBQueryParametrizationBuilder {
         return queryParametrization;
     }
     
-    public TSDBQueryParametrization buildFromJson(String json){
+    public TSDBQueryParametrization[] buildFromJson(String json){
     	GsonBuilder gsonBuilder = new GsonBuilder();
-    	gsonBuilder.registerTypeAdapter(TSDBQueryParametrization.class, new TSDBQueryDeserializer());
+    	gsonBuilder.registerTypeAdapter(TSDBQueryParametrization[].class, new TSDBQueryDeserializer());
     	Gson gson = gsonBuilder.create();
     	
-    	return gson.fromJson(json, TSDBQueryParametrization.class);
+    	return gson.fromJson(json, TSDBQueryParametrization[].class);
     }
     
     private Map<String,String> buildTagsMapFromString(String tags){

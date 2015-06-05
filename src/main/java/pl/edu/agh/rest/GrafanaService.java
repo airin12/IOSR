@@ -72,6 +72,28 @@ public class GrafanaService {
 
 	}
 	
+	@GET
+	@Path("/query/test/{start}/{end}/{metric}/{aggregator}/{tags}")
+	public String executeTestJob(@PathParam("start") String start, @PathParam("end") String end, @PathParam("metric") String metric,
+			@PathParam("aggregator") String aggregator, @PathParam("tags") String tags) {
+
+		String combinedQuery = createCombinedQuery(start,end,metric,aggregator,tags);
+		if(combinedQuery == null)
+			return "Bad query";
+		
+		String [] args = {"--class",
+				  "pl.edu.agh.spark.SparkJobRunner",
+				  "--deploy-mode",
+				  "client",
+				  "",
+				  SparkJobRunnerModes.TEST.toString(),
+				  combinedQuery};
+
+		SparkSubmit.main(args);
+		return resultMap.get("job").toString();
+
+	}
+	
 	@POST
 	@Path("/query")
 	@Consumes(MediaType.APPLICATION_JSON)
