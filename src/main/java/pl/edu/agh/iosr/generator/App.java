@@ -4,6 +4,7 @@ import pl.edu.agh.iosr.config.Configuration;
 import pl.edu.agh.iosr.worker.FileLoaderWorker;
 import pl.edu.agh.iosr.worker.GeneratorWorker;
 import pl.edu.agh.iosr.worker.OpenTSDBWorker;
+import pl.edu.agh.iosr.worker.OpenTSDBWorkerFactory;
 
 public class App {
 	public static void main(String[] args) {
@@ -14,7 +15,13 @@ public class App {
 			return;
 		}
 
-		OpenTSDBWorker runnable = null;
+		OpenTSDBWorkerFactory factory = new OpenTSDBWorkerFactory();
+		
+		OpenTSDBWorker runnable = factory.getOpenTSDBWorker(config);
+		if(runnable == null){
+			System.out.println(" Unknown type of worker ");
+			return;
+		}
 
 		if (config.getMode().equals(GeneratorWorkModes.GENERATE)) {
 			runnable = new GeneratorWorker(config);

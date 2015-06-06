@@ -1,7 +1,10 @@
 package pl.edu.agh.iosr.http;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,6 +55,35 @@ public class HTTPRequestSender {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return -1;
+		}
+	}
+
+	public String sendTestCaseOneRequest() {
+		URL url;
+		try {
+			url = new URL(address);
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.getResponseCode();
+			
+			StringWriter writer = new StringWriter();
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			while ((inputLine = in.readLine()) != null)
+				writer.write(inputLine);
+			in.close();
+			
+			return writer.toString();
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

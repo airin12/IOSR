@@ -1,5 +1,5 @@
 package pl.edu.agh.iosr.generator;
 
 public enum GeneratorWorkModes {
-	GENERATE, LOAD
+	GENERATE, LOAD, TEST1
 }

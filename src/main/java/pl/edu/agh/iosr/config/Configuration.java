@@ -26,6 +26,9 @@ public class Configuration {
 	private int duplicate = 1;
 	private String separator;
 	private List<String> tagsNamesFromFile = new ArrayList<String>();
+	private long start;
+	private long end;
+	private String aggregator;
 	
 	private static final String METRIC_ARG = "metric";
 	private static final String MODE_ARG = "mode";
@@ -39,6 +42,9 @@ public class Configuration {
 	private static final String FILE_ARG = "file";
 	private static final String SEP_ARG = "separator";
 	private static final String FORMAT_ARG = "format";
+	private static final String START_ARG = "start";
+	private static final String END_ARG = "end";
+	private static final String AGR_ARG = "aggregator";
 	
 	public static final String TIMESTAMP_COL = "timestamp";
 	public static final String VALUE_COL = "value";
@@ -69,7 +75,7 @@ public class Configuration {
 		}
 		
 		String tags = getArg(args, TAGS_ARG);
-		if(tags == null && mode.equals(GeneratorWorkModes.GENERATE)){
+		if(tags == null && !mode.equals(GeneratorWorkModes.LOAD)){
 			isValid = false;
 			errorMsg = "You must specify "+TAGS_ARG+" parameter";
 			return;
@@ -81,7 +87,7 @@ public class Configuration {
 		try{
 			numberOfRequests = Integer.parseInt(requests);
 		} catch (Exception ex){
-			if(mode.equals(GeneratorWorkModes.GENERATE)){
+			if(!mode.equals(GeneratorWorkModes.LOAD)){
 				isValid = false;
 				errorMsg = "You must specify "+REQUESTS_ARG+" parameter";
 				return;
@@ -117,7 +123,7 @@ public class Configuration {
 		}
 		
 		file = getArg(args, FILE_ARG);
-		if(file == null && mode.equals(GeneratorWorkModes.LOAD)){
+		if(file == null && !mode.equals(GeneratorWorkModes.GENERATE)){
 			isValid = false;
 			errorMsg = "You must specify "+FILE_ARG+" parameter";
 			return;
@@ -139,7 +145,26 @@ public class Configuration {
 			initializeDataFromFormat();
 		}
 		
+		String startString = getArg(args, START_ARG);
+		try{
+			start = Long.parseLong(startString);
+		} catch (Exception ex){
+			start = new Date().getTime() - 1;
+		}
 		
+		String endString = getArg(args, END_ARG);
+		try{
+			end = Long.parseLong(endString);
+		} catch (Exception ex){
+			end = new Date().getTime();
+		}
+		
+		aggregator = getArg(args, AGR_ARG);
+		if(aggregator == null && mode.equals(GeneratorWorkModes.TEST1)){
+			isValid = false;
+			errorMsg = "You must specify "+AGR_ARG+" parameter";
+			return;
+		}
 	}
 
 	private void initializeDataFromFormat() {
@@ -242,6 +267,18 @@ public class Configuration {
 
 	public List<String> getTagsNamesFromFile() {
 		return tagsNamesFromFile;
+	}
+
+	public long getStart() {
+		return start;
+	}
+
+	public long getEnd() {
+		return end;
+	}
+
+	public String getAggregator() {
+		return aggregator;
 	}
 	
 	
