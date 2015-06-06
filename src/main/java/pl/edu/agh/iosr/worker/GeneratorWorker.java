@@ -18,16 +18,16 @@ public class GeneratorWorker implements OpenTSDBWorker {
 	private HTTPRequestSender sender;
 	private Configuration config;
 	private String message;
+	private long baseDate;
 
 	public GeneratorWorker(Configuration config) {
 		this.config = config;
 		this.sender = new HTTPRequestSender("http://"+config.getAddress()+"/api/put");
 		this.templateSample = new DataSample(config.getMetric(), new Date().getTime(), config.getMax(), config.getTags());
+		if(config.getTimeStep() != 0)
+			this.baseDate = new Date().getTime();
 	}
 
-	public GeneratorWorker() {
-
-	}
 
 	public void run() {
 		Gson gson = new Gson();
@@ -35,7 +35,10 @@ public class GeneratorWorker implements OpenTSDBWorker {
 		Map<String, String> baseTags = new HashMap<String, String>(templateSample.getTags());
 
 		for (int i = 0; i < config.getNumberOfRequests(); i++) {
-			templateSample.setTimestamp(new Date().getTime());
+			if(config.getTimeStep() == 0)
+				templateSample.setTimestamp(new Date().getTime());
+			else
+				templateSample.setTimestamp(baseDate + i * config.getTimeStep());
 
 			for (int j = 0; j < config.getDuplicate(); j++) {
 				randomizeTemplete();

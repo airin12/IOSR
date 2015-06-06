@@ -31,9 +31,10 @@ public class FileLoaderWorker implements OpenTSDBWorker{
 	
 	public void run(){
 		FileInputStream fstream;
+		BufferedReader br = null;
 		try {
 			fstream = new FileInputStream(config.getFile());
-			BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+			br = new BufferedReader(new InputStreamReader(fstream));
 			
 			String strLine;
 
@@ -41,7 +42,7 @@ public class FileLoaderWorker implements OpenTSDBWorker{
 			  	processLine(strLine);
 			}
 
-			br.close();
+			
 			
 			message = "Worker ended job without errors";
 			
@@ -51,6 +52,13 @@ public class FileLoaderWorker implements OpenTSDBWorker{
 			message = "Error while reading file";
 		} catch (Exception e) {
 			message = "Error while reading lines from file: "+e.getMessage();
+		} finally {
+			try {
+				if(br!=null)
+					br.close();
+			} catch (IOException e) {
+				message = "Error while closing file";
+			}
 		}
 		
 		

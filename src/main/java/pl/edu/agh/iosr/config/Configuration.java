@@ -14,7 +14,6 @@ public class Configuration {
 	private Map<String,String> tags = new HashMap<String, String>();
 	private GeneratorWorkModes mode = null;
 	private String file = null;
-	private long date = new Date().getTime();
 	private long delay = 1000;
 	private String format = null;
 	private boolean isValid = true;
@@ -29,6 +28,7 @@ public class Configuration {
 	private long start;
 	private long end;
 	private String aggregator;
+	private int timeStep;
 	
 	private static final String METRIC_ARG = "metric";
 	private static final String MODE_ARG = "mode";
@@ -45,6 +45,7 @@ public class Configuration {
 	private static final String START_ARG = "start";
 	private static final String END_ARG = "end";
 	private static final String AGR_ARG = "aggregator";
+	private static final String STEP_ARG = "step";
 	
 	public static final String TIMESTAMP_COL = "timestamp";
 	public static final String VALUE_COL = "value";
@@ -165,6 +166,13 @@ public class Configuration {
 			errorMsg = "You must specify "+AGR_ARG+" parameter";
 			return;
 		}
+		
+		String timeStepString = getArg(args, STEP_ARG);
+		try{
+			timeStep = Integer.parseInt(timeStepString);
+		} catch (Exception ex){
+			timeStep = 0;
+		}
 	}
 
 	private void initializeDataFromFormat() {
@@ -225,9 +233,6 @@ public class Configuration {
 		return file;
 	}
 
-	public long getDate() {
-		return date;
-	}
 
 	public long getDelay() {
 		return delay;
@@ -280,6 +285,11 @@ public class Configuration {
 	public String getAggregator() {
 		return aggregator;
 	}
+
+	public int getTimeStep() {
+		return timeStep;
+	}
+	
 	
 	
 }
