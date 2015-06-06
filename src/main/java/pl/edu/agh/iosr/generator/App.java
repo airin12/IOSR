@@ -1,8 +1,6 @@
 package pl.edu.agh.iosr.generator;
 
 import pl.edu.agh.iosr.config.Configuration;
-import pl.edu.agh.iosr.worker.FileLoaderWorker;
-import pl.edu.agh.iosr.worker.GeneratorWorker;
 import pl.edu.agh.iosr.worker.OpenTSDBWorker;
 import pl.edu.agh.iosr.worker.OpenTSDBWorkerFactory;
 
@@ -21,12 +19,6 @@ public class App {
 		if(runnable == null){
 			System.out.println(" Unknown type of worker ");
 			return;
-		}
-
-		if (config.getMode().equals(GeneratorWorkModes.GENERATE)) {
-			runnable = new GeneratorWorker(config);
-		} else if (config.getMode().equals(GeneratorWorkModes.LOAD)){
-			runnable = new FileLoaderWorker(config);
 		}
 		
 		Thread thread = new Thread(runnable);
