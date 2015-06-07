@@ -89,9 +89,9 @@ public class GrafanaService {
 			@PathParam("aggregator") String aggregator, @PathParam("tags") String tags) {
 
 		String combinedQuery = createCombinedQuery(start,end,metric,aggregator,tags);
-		if(combinedQuery == null)
+		if(combinedQuery == null) {
 			return "Bad query";
-		
+		}
 		String id = String.valueOf(random.nextInt());
 		
 		String [] args = {"--class",
@@ -162,18 +162,36 @@ public class GrafanaService {
 	}
 
 	private String createCombinedQuery(String start, String end, String metric, String aggregator, String tags) {
-		if(start == null || start.equals(""))
+		if(start == null || start.equals("") || notLongNumber(start))
 			return null;
-		else if( end == null || end.equals(""))
+		else if( end == null || end.equals("") || notLongNumber(end))
 			return null;
 		else if (metric == null || metric.equals(""))
 			return null;
-		else if( aggregator == null || aggregator.equals(""))
+		else if( aggregator == null || aggregator.equals("") || notValidAggregator(aggregator))
 			return null;
 		else if( tags == null || tags.equals(""))
 			return null;
 		
 		return start+":"+end+":"+metric+":"+aggregator+":"+tags;
+	}
+
+	private boolean notValidAggregator(String aggregator) {
+		String lowerCaseAggregator = aggregator.toLowerCase();
+		if ("sum".equals(lowerCaseAggregator) || "max".equals(lowerCaseAggregator) || "min".equals(lowerCaseAggregator)
+			|| "avg".equals(lowerCaseAggregator) || "dev".equals(lowerCaseAggregator)) {
+			return false;
+		}
+		return true;
+	}
+
+	private boolean notLongNumber(String string) {
+		try {
+			Long.parseLong(string);
+		} catch (NumberFormatException e){
+			return true;
+		}
+		return false;
 	}
 
 	public void setRandom(Random random){
