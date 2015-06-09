@@ -9,7 +9,8 @@ import java.util.Map;
 import pl.edu.agh.iosr.generator.GeneratorWorkModes;
 
 public class Configuration {
-	private String address = null;
+	private String grafanaServiceAddress = null;
+	private String tsdbServiceAddress = null;
 	private String metric = null;
 	private Map<String,String> tags = new HashMap<String, String>();
 	private GeneratorWorkModes mode = null;
@@ -29,10 +30,12 @@ public class Configuration {
 	private long end;
 	private String aggregator;
 	private int timeStep;
+	private String sql;
 	
 	private static final String METRIC_ARG = "metric";
 	private static final String MODE_ARG = "mode";
-	private static final String ADDRESS_ARG = "address";
+	private static final String SERVICE_ADDRESS_ARG = "service_address";
+	private static final String TSDB_ADDRESS_ARG = "tsdb_address";
 	private static final String TAGS_ARG = "tags";
 	private static final String REQUESTS_ARG = "req_nr";
 	private static final String DELAY_ARG = "delay";
@@ -46,6 +49,7 @@ public class Configuration {
 	private static final String END_ARG = "end";
 	private static final String AGR_ARG = "aggregator";
 	private static final String STEP_ARG = "step";
+	private static final String SQL_ARG = "sql";
 	
 	public static final String TIMESTAMP_COL = "timestamp";
 	public static final String VALUE_COL = "value";
@@ -68,10 +72,17 @@ public class Configuration {
 			return;
 		}
 		
-		address = getArg(args, ADDRESS_ARG);
-		if(address == null){
+		grafanaServiceAddress = getArg(args, SERVICE_ADDRESS_ARG);
+		if(grafanaServiceAddress == null && (mode.equals(GeneratorWorkModes.TEST1) || mode.equals(GeneratorWorkModes.TEST2) || mode.equals(GeneratorWorkModes.TEST3))){
 			isValid = false;
-			errorMsg = "You must specify "+ADDRESS_ARG+" parameter";
+			errorMsg = "You must specify "+SERVICE_ADDRESS_ARG+" parameter";
+			return;
+		}
+		
+		tsdbServiceAddress = getArg(args, TSDB_ADDRESS_ARG);
+		if(tsdbServiceAddress == null && (mode.equals(GeneratorWorkModes.GENERATE) || mode.equals(GeneratorWorkModes.LOAD) || mode.equals(GeneratorWorkModes.TEST3))){
+			isValid = false;
+			errorMsg = "You must specify "+TSDB_ADDRESS_ARG+" parameter";
 			return;
 		}
 		
@@ -161,7 +172,7 @@ public class Configuration {
 		}
 		
 		aggregator = getArg(args, AGR_ARG);
-		if(aggregator == null && mode.equals(GeneratorWorkModes.TEST1)){
+		if(aggregator == null && (mode.equals(GeneratorWorkModes.TEST1) || mode.equals(GeneratorWorkModes.TEST2))){
 			isValid = false;
 			errorMsg = "You must specify "+AGR_ARG+" parameter";
 			return;
@@ -172,6 +183,15 @@ public class Configuration {
 			timeStep = Integer.parseInt(timeStepString);
 		} catch (Exception ex){
 			timeStep = 0;
+		}
+		
+		sql = getArg(args, SQL_ARG);
+		if(sql == null && mode.equals(GeneratorWorkModes.TEST2)){
+			isValid = false;
+			errorMsg = "You must specify "+SQL_ARG+" parameter";
+			return;
+		} else if (sql != null){
+			sql = sql.replace(";", " ");
 		}
 	}
 
@@ -213,8 +233,8 @@ public class Configuration {
 		return null;
 	}
 
-	public String getAddress() {
-		return address;
+	public String getGrafanaServiceAddress() {
+		return grafanaServiceAddress;
 	}
 
 	public String getMetric() {
@@ -289,7 +309,14 @@ public class Configuration {
 	public int getTimeStep() {
 		return timeStep;
 	}
-	
-	
+
+	public String getSql() {
+		return sql;
+	}
+
+	public String getTsdbServiceAddress() {
+		return tsdbServiceAddress;
+	}
+
 	
 }

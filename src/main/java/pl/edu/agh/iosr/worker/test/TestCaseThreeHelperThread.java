@@ -1,51 +1,72 @@
-package pl.edu.agh.iosr.worker;
+package pl.edu.agh.iosr.worker.test;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import pl.edu.agh.iosr.config.Configuration;
 import pl.edu.agh.iosr.data.DataSample;
 import pl.edu.agh.iosr.http.HTTPRequestSender;
+import pl.edu.agh.iosr.worker.OpenTSDBWorker;
 
 import com.google.gson.Gson;
 
-public class GeneratorWorker implements OpenTSDBWorker {
+public class TestCaseThreeHelperThread implements OpenTSDBWorker {
 	private DataSample templateSample;
 	private final Random random = new Random(new Date().getTime());
 	private HTTPRequestSender sender;
 	private Configuration config;
 	private String message;
 	private long baseDate;
+	private int count = 0;
 
-	public GeneratorWorker(Configuration config) {
+	public TestCaseThreeHelperThread(Configuration config) {
 		this.config = config;
 		this.sender = new HTTPRequestSender("http://"+config.getTsdbServiceAddress()+"/api/put");
-		this.templateSample = new DataSample(config.getMetric(), new Date().getTime(), config.getMax(), config.getTags());
+		this.templateSample = new DataSample(config.getMetric(), new Date().getTime()/1000, config.getMax(), config.getTags());
 		if(config.getTimeStep() != 0)
-			this.baseDate = new Date().getTime();
+			this.baseDate = new Date().getTime()/1000;
 	}
 
 
 	public void run() {
 		Gson gson = new Gson();
 
-		Map<String, String> baseTags = new HashMap<String, String>(templateSample.getTags());
-
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(config.getFile().replace(".txt", "_2.txt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			message = "Error while reading file "+config.getFile();
+			return;
+		}
+	 
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+		
 		for (int i = 0; i < config.getNumberOfRequests(); i++) {
 			if(config.getTimeStep() == 0)
-				templateSample.setTimestamp(new Date().getTime());
+				templateSample.setTimestamp(new Date().getTime()/1000);
 			else
-				templateSample.setTimestamp(baseDate + i * config.getTimeStep());
+				templateSample.setTimestamp((baseDate + i * config.getTimeStep())/1000);
 
 			for (int j = 0; j < config.getDuplicate(); j++) {
 				randomizeTemplete();
-				templateSample.setTags(getNewTagsForSample(baseTags, j));
 				String json = gson.toJson(templateSample);
 				System.out.println(" Sending: " + json);
 				int responseCode = sender.sendDataSample(json);
+				count++;
+				long currentTime = new Date().getTime();
+				try {
+					bw.write(String.valueOf(currentTime)+";"+String.valueOf(count));
+					bw.newLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 				System.out.println(" Response code: " + responseCode);
 			}
 
@@ -54,22 +75,17 @@ public class GeneratorWorker implements OpenTSDBWorker {
 				Thread.sleep(config.getDelay());
 			} catch (InterruptedException e) {
 				message = "Error while performing sleep operation: "+e.getMessage();
-				return;
 			}
+		}
+		
+		try {
+			bw.flush();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		message = "Worker ended job without errors";
-	}
-
-	private Map<String, String> getNewTagsForSample(Map<String, String> baseTags, int j) {
-
-		Map<String, String> resultMap = new HashMap<String, String>();
-
-		for (Entry<String, String> entry : baseTags.entrySet()) {
-			resultMap.put(entry.getKey(), entry.getValue() + j);
-		}
-
-		return resultMap;
 	}
 
 	private void randomizeTemplete() {

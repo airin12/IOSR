@@ -5,45 +5,39 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import pl.edu.agh.iosr.config.Configuration;
+import pl.edu.agh.iosr.data.GrafanaServiceRequest;
+import pl.edu.agh.iosr.data.SingleQuery;
 import pl.edu.agh.iosr.http.HTTPRequestSender;
 import pl.edu.agh.iosr.worker.OpenTSDBWorker;
 
-public class TestCaseOne implements OpenTSDBWorker{
-	
+import com.google.gson.Gson;
+
+public class TestCaseTwo implements OpenTSDBWorker{
+
 	private Configuration config;
 	private String message;
 
-	public TestCaseOne(Configuration config) {
+	public TestCaseTwo(Configuration config) {
 		this.config = config;
 	}
 
 	@Override
 	public void run() {
 		
-		StringWriter addressWriter = new StringWriter();
-		addressWriter.write("http://");
-		addressWriter.write(config.getGrafanaServiceAddress());
-		addressWriter.write("/grafana-rest-service/grafana/query/test/");
-		addressWriter.write(String.valueOf(config.getStart())+"/");
-		addressWriter.write(String.valueOf(config.getEnd())+"/");
-		addressWriter.write(config.getMetric()+"/");
-		addressWriter.write(config.getAggregator()+"/");
+		SingleQuery query = new SingleQuery(config.getAggregator(), config.getMetric(), config.getSql(), config.getTags());
 		
-		Iterator<Entry<String,String>> it = config.getTags().entrySet().iterator();
+		List<SingleQuery> queries = new ArrayList<SingleQuery>();
+		queries.add(query);		
+		GrafanaServiceRequest request = new GrafanaServiceRequest(config.getStart(), config.getEnd(), queries);
 		
-		while(it.hasNext()){
-			Entry<String, String> entry = it.next();
-			addressWriter.write(entry.getKey()+"="+entry.getValue());
-			if(it.hasNext())
-				addressWriter.write(";");
-		}
+		Gson gson = new Gson();
+		String json = gson.toJson(request);
 		
-		HTTPRequestSender sender = new HTTPRequestSender(addressWriter.toString());
+		HTTPRequestSender sender = new HTTPRequestSender("http://"+config.getGrafanaServiceAddress()+"/grafana-rest-service/grafana/query");
 		
 		FileOutputStream fos;
 		try {
@@ -58,10 +52,14 @@ public class TestCaseOne implements OpenTSDBWorker{
 	 		
 		try {
 			for(int i = 0 ; i < config.getNumberOfRequests() ; i++){
-				String result = sender.sendTestCaseOneRequest();
-				result = result.replace("(","").split(",")[0];
-				System.out.println("Requests performed in time: "+result+" ns");
-				bw.write(result+";"+String.valueOf(config.getEnd()-config.getStart()));
+				long start = System.nanoTime();
+				String result = sender.sendTestCaseTwoRequest(json);
+				long end = System.nanoTime();
+				String resultTime = String.valueOf(end-start);
+				
+				System.out.println("Response in "+resultTime+" ns. Result: "+result);
+				
+				bw.write(resultTime+";"+String.valueOf(config.getEnd()-config.getStart()));
 				bw.newLine();
 				Thread.sleep(config.getDelay());
 			}

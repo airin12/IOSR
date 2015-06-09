@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -13,24 +14,22 @@ import pl.edu.agh.iosr.config.Configuration;
 import pl.edu.agh.iosr.http.HTTPRequestSender;
 import pl.edu.agh.iosr.worker.OpenTSDBWorker;
 
-public class TestCaseOne implements OpenTSDBWorker{
-	
+public class TestCaseThreeMain implements OpenTSDBWorker{
+
 	private Configuration config;
 	private String message;
+	private int actualCount = 0;
+	private String addressString;
 
-	public TestCaseOne(Configuration config) {
+	public TestCaseThreeMain(Configuration config) {
 		this.config = config;
-	}
-
-	@Override
-	public void run() {
 		
 		StringWriter addressWriter = new StringWriter();
 		addressWriter.write("http://");
 		addressWriter.write(config.getGrafanaServiceAddress());
 		addressWriter.write("/grafana-rest-service/grafana/query/test/");
-		addressWriter.write(String.valueOf(config.getStart())+"/");
-		addressWriter.write(String.valueOf(config.getEnd())+"/");
+		addressWriter.write(String.valueOf(new Date().getTime()/1000)+"/");
+		addressWriter.write("%s/");
 		addressWriter.write(config.getMetric()+"/");
 		addressWriter.write(config.getAggregator()+"/");
 		
@@ -43,7 +42,27 @@ public class TestCaseOne implements OpenTSDBWorker{
 				addressWriter.write(";");
 		}
 		
-		HTTPRequestSender sender = new HTTPRequestSender(addressWriter.toString());
+		addressString = addressWriter.toString();
+	}
+
+	@Override
+	public void run() {
+		
+
+		
+		HTTPRequestSender sender = new HTTPRequestSender();
+		
+		sender.setAddress(String.format(addressString, (new Date().getTime() + 1000 )/1000));
+		String result = sender.sendTestCaseOneRequest();
+		long currentTime = new Date().getTime();
+		result = result.replace(")","").split(",")[1];
+		actualCount = Integer.parseInt(result);
+		int boundary = actualCount;
+		System.out.println(boundary);
+		
+		OpenTSDBWorker worker = new TestCaseThreeHelperThread(config);
+		Thread th = new Thread(worker);
+		th.start();
 		
 		FileOutputStream fos;
 		try {
@@ -57,11 +76,18 @@ public class TestCaseOne implements OpenTSDBWorker{
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 	 		
 		try {
-			for(int i = 0 ; i < config.getNumberOfRequests() ; i++){
-				String result = sender.sendTestCaseOneRequest();
-				result = result.replace("(","").split(",")[0];
-				System.out.println("Requests performed in time: "+result+" ns");
-				bw.write(result+";"+String.valueOf(config.getEnd()-config.getStart()));
+			while(actualCount < boundary + config.getNumberOfRequests()){
+				sender.setAddress(String.format(addressString, new Date().getTime()/1000));
+				result = sender.sendTestCaseOneRequest();
+				currentTime = new Date().getTime();
+				result = result.replace(")","").split(",")[1];
+				actualCount = Integer.parseInt(result);
+				
+				if(actualCount==0)
+					actualCount = boundary;
+				
+				System.out.println("Time: "+currentTime+" count: "+String.valueOf(actualCount-boundary));
+				bw.write(String.valueOf(currentTime)+";"+String.valueOf(actualCount-boundary));
 				bw.newLine();
 				Thread.sleep(config.getDelay());
 			}
@@ -81,6 +107,12 @@ public class TestCaseOne implements OpenTSDBWorker{
 			e.printStackTrace();
 			message = "Error while closing file "+config.getFile();
 			return;
+		}
+		
+		try {
+			th.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
 		message = "Succesfully performed requests";

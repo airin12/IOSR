@@ -26,7 +26,7 @@ public class FileLoaderWorker implements OpenTSDBWorker{
 	
 	public FileLoaderWorker(Configuration config) {
 		this.config = config;
-		sender = new HTTPRequestSender("http://"+config.getAddress()+"/api/put");
+		sender = new HTTPRequestSender("http://"+config.getTsdbServiceAddress()+"/api/put");
 	}
 	
 	public void run(){

@@ -62,20 +62,54 @@ public class HTTPRequestSender {
 		URL url;
 		try {
 			url = new URL(address);
-
+			System.out.println(url);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 			connection.getResponseCode();
-			
+
 			StringWriter writer = new StringWriter();
-			
+
 			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null)
 				writer.write(inputLine);
 			in.close();
-			
+
+			return writer.toString();
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String sendTestCaseTwoRequest(String json) {
+		URL url;
+		try {
+			url = new URL(address);
+
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+			connection.setDoOutput(true);
+
+			OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+			wr.write(json);
+			wr.flush();
+			wr.close();
+
+			connection.getResponseCode();
+			StringWriter writer = new StringWriter();
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			String inputLine;
+			while ((inputLine = in.readLine()) != null)
+				writer.write(inputLine);
+			in.close();
 			return writer.toString();
 
 		} catch (MalformedURLException e) {
