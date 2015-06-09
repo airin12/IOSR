@@ -72,26 +72,34 @@ public class RowConverter {
 			return mainJsonArray;
 			
 		} else {
-			JsonArray mainJsonArray = new JsonArray();
+			JsonObject dpsObject = new JsonObject();
+			
+			JsonObject newQueryResult = new JsonObject();
+			newQueryResult.addProperty("metric", metric);
+			newQueryResult.add("tags", new JsonObject());
+			newQueryResult.add("aggregateTags", new JsonArray());
+			newQueryResult.add("dps", dpsObject);
+			
+			if(rows.size() > 0)
+				dpsObject.addProperty("-1", -1);
+			
 			List<String> columns = analyzer.getResultColumnNames();
 			Map<String,Integer> indexes = analyzer.getResultIndexesMap();
 			Map<String,String> classes = analyzer.getResultClassesMap();
 			
 			for(Row row : rows){
-				JsonObject rowObject = new JsonObject();
 				for(String column : columns){
 					if(classes.get(column).equals(Long.class.toString()))
-						rowObject.addProperty(column, row.getLong(indexes.get(column)));
+						dpsObject.addProperty(column, row.getLong(indexes.get(column)));
 					else if(classes.get(column).equals(Double.class.toString()))
-						rowObject.addProperty(column, row.getDouble(indexes.get(column)));
+						dpsObject.addProperty(column, row.getDouble(indexes.get(column)));
 					else
-						rowObject.addProperty(column, row.getString(indexes.get(column)));
+						dpsObject.addProperty(column, row.getString(indexes.get(column)));
 				}
-				mainJsonArray.add(rowObject);
 			}
 			
 			JsonArray newResult = result.getAsJsonArray();
-			newResult.add(mainJsonArray);
+			newResult.add(newQueryResult);
 			return newResult;
 		}
 	}

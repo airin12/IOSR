@@ -51,9 +51,9 @@ public class LoadDataSparkJob extends AbstractSparkJob{
 		long end = System.nanoTime();
 		
 		List<Row> valuesInList = rowRDD.collect();
+		int count = valuesInList.size();
 		
-		
-		return new Long(end-start);
+		return new Tuple2<Long, Integer>(new Long(end-start), new Integer(count));
 	}
 
 }
