@@ -12,7 +12,7 @@ public class GeneratorWorkerTest {
 	
 	@Test
 	public void testValidMessage(){
-		String [] args = new String[]{"mode=GENERATE","metric=mem.usage.perc","address=172.17.84.76:2002",
+		String [] args = new String[]{"mode=GENERATE","metric=mem.usage.perc","tsdb_address=172.17.84.76:2002",
 				  "tags=cpu:01","req_nr=1"};
 		Configuration config = new Configuration(args);
 		assertTrue(config.isValid());
@@ -25,7 +25,7 @@ public class GeneratorWorkerTest {
 	
 	@Test
 	public void testValidMessageWithTimeStep(){
-		String [] args = new String[]{"mode=GENERATE","metric=mem.usage.perc","address=172.17.84.76:2002",
+		String [] args = new String[]{"mode=GENERATE","metric=mem.usage.perc","tsdb_address=172.17.84.76:2002",
 				  "tags=cpu:01","req_nr=1","step=1"};
 		Configuration config = new Configuration(args);
 		assertTrue(config.isValid());

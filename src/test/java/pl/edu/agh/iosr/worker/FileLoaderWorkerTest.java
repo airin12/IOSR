@@ -22,7 +22,7 @@ public class FileLoaderWorkerTest {
 		Path resourcePath = Paths.get(getClass().getResource("/data.txt").toURI());
 		String path = resourcePath.toString();
 
-		String [] args = new String[]{"mode=LOAD","metric=mem.usage.perc","address=172.17.84.76:2002",
+		String [] args = new String[]{"mode=LOAD","metric=mem.usage.perc","tsdb_address=172.17.84.76:2002",
 				  "tags=cpu:01","file="+path,"separator=:","format=value:::timestamp"};
 		Configuration config = new Configuration(args);
 		assertTrue(config.isValid());
@@ -35,7 +35,7 @@ public class FileLoaderWorkerTest {
 	
 	@Test
 	public void testFileNotFound(){
-		String [] args = new String[]{"mode=LOAD","metric=mem.usage.perc","address=172.17.84.76:2002",
+		String [] args = new String[]{"mode=LOAD","metric=mem.usage.perc","tsdb_address=172.17.84.76:2002",
 				  "tags=cpu:01","file=xxz.txt","separator=:","format=value:::timestamp"};
 		Configuration config = new Configuration(args);
 		assertTrue(config.isValid());
@@ -51,7 +51,7 @@ public class FileLoaderWorkerTest {
 		Path resourcePath = Paths.get(getClass().getResource("/data.txt").toURI());
 		String path = resourcePath.toString();
 		
-		String [] args = new String[]{"mode=LOAD","metric=mem.usage.perc","address=172.17.84.76:2002",
+		String [] args = new String[]{"mode=LOAD","metric=mem.usage.perc","tsdb_address=172.17.84.76:2002",
 				  "file="+path,"separator=:","format=value:::timestamp"};
 		Configuration config = new Configuration(args);
 		assertTrue(config.isValid());
