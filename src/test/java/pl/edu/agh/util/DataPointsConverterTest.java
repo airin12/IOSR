@@ -44,18 +44,18 @@ public class DataPointsConverterTest {
     }
 
     @Test
-    public void shouldReturnListWithTwoElements(){
+    public void shouldReturnListWithOneElement(){
         DataPoints[] dataPoints = new DataPoints[1];
         dataPoints[0] = prepareMockedDataPoints(2);
         when(mockedDataPoints.aggregatedSize()).thenReturn(2);
 
         List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags, new Tuple2<Long, Long>(0L, 1L));
 
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
     }
 
     @Test
-    public void shouldReturnListWithSixElements(){
+    public void shouldReturnListWithThreeElements(){
         DataPoints[] dataPoints = new DataPoints[3];
         dataPoints[0] = prepareMockedDataPoints(1);
         dataPoints[1] = prepareMockedDataPoints(2);
@@ -63,7 +63,7 @@ public class DataPointsConverterTest {
 
         List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags, new Tuple2<Long, Long>(0L, 1L));
 
-        assertEquals(6, result.size());
+        assertEquals(3, result.size());
     }
 
     private DataPoints prepareMockedDataPoints(int numberOfElements){
