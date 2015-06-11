@@ -28,7 +28,7 @@ public class TestCaseThreeMain implements OpenTSDBWorker{
 		addressWriter.write("http://");
 		addressWriter.write(config.getGrafanaServiceAddress());
 		addressWriter.write("/grafana-rest-service/grafana/query/test/");
-		addressWriter.write(String.valueOf(new Date().getTime()/1000)+"/");
+		addressWriter.write(String.valueOf(new Date().getTime())+"/");
 		addressWriter.write("%s/");
 		addressWriter.write(config.getMetric()+"/");
 		addressWriter.write(config.getAggregator()+"/");
@@ -46,19 +46,8 @@ public class TestCaseThreeMain implements OpenTSDBWorker{
 	}
 
 	@Override
-	public void run() {
-		
-
-		
+	public void run() {		
 		HTTPRequestSender sender = new HTTPRequestSender();
-		
-		sender.setAddress(String.format(addressString, (new Date().getTime() + 1000 )/1000));
-		String result = sender.sendTestCaseOneRequest();
-		long currentTime = new Date().getTime();
-		result = result.replace(")","").split(",")[1];
-		actualCount = Integer.parseInt(result);
-		int boundary = actualCount;
-		System.out.println(boundary);
 		
 		OpenTSDBWorker worker = new TestCaseThreeHelperThread(config);
 		Thread th = new Thread(worker);
@@ -76,28 +65,20 @@ public class TestCaseThreeMain implements OpenTSDBWorker{
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 	 		
 		try {
-			while(actualCount < boundary + config.getNumberOfRequests()){
-				sender.setAddress(String.format(addressString, new Date().getTime()/1000));
-				result = sender.sendTestCaseOneRequest();
-				currentTime = new Date().getTime();
+			while(actualCount < config.getNumberOfRequests()){
+				sender.setAddress(String.format(addressString, new Date().getTime()));
+				String result = sender.sendTestCaseOneRequest();
+				long currentTime = new Date().getTime();
 				result = result.replace(")","").split(",")[1];
 				actualCount = Integer.parseInt(result);
-				
-				if(actualCount==0)
-					actualCount = boundary;
-				
-				System.out.println("Time: "+currentTime+" count: "+String.valueOf(actualCount-boundary));
-				bw.write(String.valueOf(currentTime)+";"+String.valueOf(actualCount-boundary));
+		
+				System.out.println("Time: "+currentTime+" count: "+String.valueOf(actualCount));
+				bw.write(String.valueOf(currentTime)+";"+String.valueOf(actualCount));
 				bw.newLine();
-				Thread.sleep(config.getDelay());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			message = "Error while writing to file "+config.getFile();
-			return;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			message = "Error while performing sleep operaton";
 			return;
 		}
 		

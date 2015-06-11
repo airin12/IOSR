@@ -21,15 +21,12 @@ public class TestCaseThreeHelperThread implements OpenTSDBWorker {
 	private HTTPRequestSender sender;
 	private Configuration config;
 	private String message;
-	private long baseDate;
 	private int count = 0;
 
 	public TestCaseThreeHelperThread(Configuration config) {
 		this.config = config;
 		this.sender = new HTTPRequestSender("http://"+config.getTsdbServiceAddress()+"/api/put");
-		this.templateSample = new DataSample(config.getMetric(), new Date().getTime()/1000, config.getMax(), config.getTags());
-		if(config.getTimeStep() != 0)
-			this.baseDate = new Date().getTime()/1000;
+		this.templateSample = new DataSample(config.getMetric(), new Date().getTime(), config.getMax(), config.getTags());
 	}
 
 
@@ -48,10 +45,7 @@ public class TestCaseThreeHelperThread implements OpenTSDBWorker {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 		
 		for (int i = 0; i < config.getNumberOfRequests(); i++) {
-			if(config.getTimeStep() == 0)
-				templateSample.setTimestamp(new Date().getTime()/1000);
-			else
-				templateSample.setTimestamp((baseDate + i * config.getTimeStep())/1000);
+			templateSample.setTimestamp(new Date().getTime());
 
 			for (int j = 0; j < config.getDuplicate(); j++) {
 				randomizeTemplete();
@@ -63,6 +57,7 @@ public class TestCaseThreeHelperThread implements OpenTSDBWorker {
 				try {
 					bw.write(String.valueOf(currentTime)+";"+String.valueOf(count));
 					bw.newLine();
+					bw.flush();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
