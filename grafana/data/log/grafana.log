@@ -1,0 +1,613 @@
+2015/06/01 18:54:47 [I] Starting Grafana
+2015/06/01 18:54:47 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 18:54:47 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 18:54:47 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 18:54:47 [I] Migrator: Starting DB migration
+2015/06/01 18:54:47 [I] Migrator: exec migration id: create migration_log table
+2015/06/01 18:54:47 [I] Migrator: exec migration id: create user table
+2015/06/01 18:54:47 [I] Migrator: exec migration id: add unique index user.login
+2015/06/01 18:54:47 [I] Migrator: exec migration id: add unique index user.email
+2015/06/01 18:54:48 [I] Migrator: exec migration id: drop index UQE_user_login - v1
+2015/06/01 18:54:48 [I] Migrator: exec migration id: drop index UQE_user_email - v1
+2015/06/01 18:54:48 [I] Migrator: exec migration id: Rename table user to user_v1 - v1
+2015/06/01 18:54:48 [I] Migrator: exec migration id: create user table v2
+2015/06/01 18:54:48 [I] Migrator: exec migration id: create index UQE_user_login - v2
+2015/06/01 18:54:48 [I] Migrator: exec migration id: create index UQE_user_email - v2
+2015/06/01 18:54:49 [I] Migrator: exec migration id: copy data_source v1 to v2
+2015/06/01 18:54:49 [I] Migrator: exec migration id: Drop old table user_v1
+2015/06/01 18:54:49 [I] Migrator: exec migration id: create star table
+2015/06/01 18:54:49 [I] Migrator: exec migration id: add unique index star.user_id_dashboard_id
+2015/06/01 18:54:49 [I] Migrator: exec migration id: create org table v1
+2015/06/01 18:54:49 [I] Migrator: exec migration id: create index UQE_org_name - v1
+2015/06/01 18:54:50 [I] Migrator: exec migration id: create org_user table v1
+2015/06/01 18:54:50 [I] Migrator: exec migration id: create index IDX_org_user_org_id - v1
+2015/06/01 18:54:50 [I] Migrator: exec migration id: create index UQE_org_user_org_id_user_id - v1
+2015/06/01 18:54:50 [I] Migrator: exec migration id: copy data account to org
+2015/06/01 18:54:50 [I] Migrator: skipping migration id: copy data account to org, condition not fulfilled
+2015/06/01 18:54:50 [I] Migrator: exec migration id: copy data account_user to org_user
+2015/06/01 18:54:50 [I] Migrator: skipping migration id: copy data account_user to org_user, condition not fulfilled
+2015/06/01 18:54:50 [I] Migrator: exec migration id: Drop old table account
+2015/06/01 18:54:51 [I] Migrator: exec migration id: Drop old table account_user
+2015/06/01 18:54:51 [I] Migrator: exec migration id: create dashboard table
+2015/06/01 18:54:51 [I] Migrator: exec migration id: add index dashboard.account_id
+2015/06/01 18:54:51 [I] Migrator: exec migration id: add unique index dashboard_account_id_slug
+2015/06/01 18:54:51 [I] Migrator: exec migration id: create dashboard_tag table
+2015/06/01 18:54:51 [I] Migrator: exec migration id: add unique index dashboard_tag.dasboard_id_term
+2015/06/01 18:54:52 [I] Migrator: exec migration id: drop index UQE_dashboard_tag_dashboard_id_term - v1
+2015/06/01 18:54:52 [I] Migrator: exec migration id: Rename table dashboard to dashboard_v1 - v1
+2015/06/01 18:54:52 [I] Migrator: exec migration id: create dashboard v2
+2015/06/01 18:54:52 [I] Migrator: exec migration id: create index IDX_dashboard_org_id - v2
+2015/06/01 18:54:52 [I] Migrator: exec migration id: create index UQE_dashboard_org_id_slug - v2
+2015/06/01 18:54:52 [I] Migrator: exec migration id: copy dashboard v1 to v2
+2015/06/01 18:54:53 [I] Migrator: exec migration id: drop table dashboard_v1
+2015/06/01 18:54:53 [I] Migrator: exec migration id: alter dashboard.data to mediumtext v1
+2015/06/01 18:54:53 [I] Migrator: exec migration id: create data_source table
+2015/06/01 18:54:53 [I] Migrator: exec migration id: add index data_source.account_id
+2015/06/01 18:54:53 [I] Migrator: exec migration id: add unique index data_source.account_id_name
+2015/06/01 18:54:53 [I] Migrator: exec migration id: drop index IDX_data_source_account_id - v1
+2015/06/01 18:54:54 [I] Migrator: exec migration id: drop index UQE_data_source_account_id_name - v1
+2015/06/01 18:54:54 [I] Migrator: exec migration id: Rename table data_source to data_source_v1 - v1
+2015/06/01 18:54:54 [I] Migrator: exec migration id: create data_source table v2
+2015/06/01 18:54:54 [I] Migrator: exec migration id: create index IDX_data_source_org_id - v2
+2015/06/01 18:54:54 [I] Migrator: exec migration id: create index UQE_data_source_org_id_name - v2
+2015/06/01 18:54:54 [I] Migrator: exec migration id: copy data_source v1 to v2
+2015/06/01 18:54:54 [I] Migrator: exec migration id: Drop old table data_source_v1 #2
+2015/06/01 18:54:55 [I] Migrator: exec migration id: create api_key table
+2015/06/01 18:54:55 [I] Migrator: exec migration id: add index api_key.account_id
+2015/06/01 18:54:55 [I] Migrator: exec migration id: add index api_key.key
+2015/06/01 18:54:55 [I] Migrator: exec migration id: add index api_key.account_id_name
+2015/06/01 18:54:55 [I] Migrator: exec migration id: drop index IDX_api_key_account_id - v1
+2015/06/01 18:54:55 [I] Migrator: exec migration id: drop index UQE_api_key_key - v1
+2015/06/01 18:54:56 [I] Migrator: exec migration id: drop index UQE_api_key_account_id_name - v1
+2015/06/01 18:54:56 [I] Migrator: exec migration id: Rename table api_key to api_key_v1 - v1
+2015/06/01 18:54:56 [I] Migrator: exec migration id: create api_key table v2
+2015/06/01 18:54:56 [I] Migrator: exec migration id: create index IDX_api_key_org_id - v2
+2015/06/01 18:54:56 [I] Migrator: exec migration id: create index UQE_api_key_key - v2
+2015/06/01 18:54:56 [I] Migrator: exec migration id: create index UQE_api_key_org_id_name - v2
+2015/06/01 18:54:57 [I] Migrator: exec migration id: copy api_key v1 to v2
+2015/06/01 18:54:57 [I] Migrator: exec migration id: Drop old table api_key_v1
+2015/06/01 18:54:57 [I] Migrator: exec migration id: create dashboard_snapshot table v4
+2015/06/01 18:54:57 [I] Migrator: exec migration id: drop table dashboard_snapshot_v4 #1
+2015/06/01 18:54:57 [I] Migrator: exec migration id: create dashboard_snapshot table v5 #2
+2015/06/01 18:54:57 [I] Migrator: exec migration id: create index UQE_dashboard_snapshot_key - v5
+2015/06/01 18:54:58 [I] Migrator: exec migration id: create index UQE_dashboard_snapshot_delete_key - v5
+2015/06/01 18:54:58 [I] Migrator: exec migration id: create index IDX_dashboard_snapshot_user_id - v5
+2015/06/01 18:54:58 [I] Migrator: exec migration id: alter dashboard_snapshot to mediumtext v2
+2015/06/01 18:54:58 [I] Created default admin user: admin
+2015/06/01 18:54:58 [I] Listen: http://0.0.0.0:3000
+2015/06/01 18:55:02 [I] Completed / 302 Found in 499.944µs
+2015/06/01 18:55:02 [T] auto-login cookie cleared: admin
+2015/06/01 18:55:03 [I] [1;31mCompleted /css/grafana.dark.min.css 404 Not Found in 562.029µs[0m
+2015/06/01 18:55:08 [I] [1;31mCompleted /css/grafana.dark.min.css 404 Not Found in 1.223899ms[0m
+2015/06/01 18:55:26 [I] [1;31mCompleted /css/grafana.dark.min.css 404 Not Found in 841.15µs[0m
+2015/06/01 19:28:59 [I] Starting Grafana
+2015/06/01 19:28:59 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 19:28:59 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 19:28:59 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 19:28:59 [I] Migrator: Starting DB migration
+2015/06/01 19:28:59 [I] Listen: http://0.0.0.0:3000
+2015/06/01 20:33:47 [I] Starting Grafana
+2015/06/01 20:33:47 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 20:33:47 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 20:33:47 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 20:33:47 [I] Migrator: Starting DB migration
+2015/06/01 20:33:47 [I] Listen: http://0.0.0.0:3000
+2015/06/01 20:38:22 [I] Starting Grafana
+2015/06/01 20:38:22 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 20:38:22 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 20:38:22 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 20:38:22 [I] Migrator: Starting DB migration
+2015/06/01 20:38:22 [I] Listen: http://0.0.0.0:3000
+2015/06/01 20:50:43 [I] Starting Grafana
+2015/06/01 20:50:43 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 20:50:43 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 20:50:43 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 20:50:43 [I] Migrator: Starting DB migration
+2015/06/01 20:50:43 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:01:31 [I] Starting Grafana
+2015/06/01 21:01:31 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:01:31 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:01:31 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:01:31 [I] Migrator: Starting DB migration
+2015/06/01 21:01:31 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:04:42 [I] Starting Grafana
+2015/06/01 21:04:42 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:04:42 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:04:42 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:04:42 [I] Migrator: Starting DB migration
+2015/06/01 21:04:42 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:05:47 [I] Starting Grafana
+2015/06/01 21:05:47 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:05:47 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:05:47 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:05:47 [I] Migrator: Starting DB migration
+2015/06/01 21:05:47 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:09:42 [I] Starting Grafana
+2015/06/01 21:09:42 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:09:42 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:09:42 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:09:42 [I] Migrator: Starting DB migration
+2015/06/01 21:09:42 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:12:24 [I] Starting Grafana
+2015/06/01 21:12:24 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:12:24 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:12:24 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:12:24 [I] Migrator: Starting DB migration
+2015/06/01 21:12:24 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:14:13 [I] Starting Grafana
+2015/06/01 21:14:13 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:14:13 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:14:13 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:14:13 [I] Migrator: Starting DB migration
+2015/06/01 21:14:13 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:19:45 [I] Starting Grafana
+2015/06/01 21:19:45 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:19:45 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:19:45 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:19:45 [I] Migrator: Starting DB migration
+2015/06/01 21:19:45 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:50:36 [I] Starting Grafana
+2015/06/01 21:50:37 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 21:50:37 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 21:50:37 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 21:50:37 [I] Migrator: Starting DB migration
+2015/06/01 21:50:37 [I] Listen: http://0.0.0.0:3000
+2015/06/01 21:50:40 [I] Completed / 302 Found in 23.294271ms
+2015/06/01 21:50:40 [T] auto-login cookie cleared: admin
+2015/06/01 22:01:16 [I] Starting Grafana
+2015/06/01 22:01:16 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 22:01:16 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 22:01:16 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 22:01:16 [I] Migrator: Starting DB migration
+2015/06/01 22:01:16 [I] Listen: http://0.0.0.0:3000
+2015/06/01 22:15:28 [I] Starting Grafana
+2015/06/01 22:15:28 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/01 22:15:28 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/01 22:15:28 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/01 22:15:28 [I] Migrator: Starting DB migration
+2015/06/01 22:15:28 [I] Listen: http://0.0.0.0:3000
+2015/06/07 08:57:11 [I] Starting Grafana
+2015/06/07 08:57:11 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 08:57:11 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 08:57:11 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 08:57:11 [I] Migrator: Starting DB migration
+2015/06/07 08:57:12 [I] Listen: http://0.0.0.0:3000
+2015/06/07 08:57:15 [I] Completed / 302 Found in 507.63µs
+2015/06/07 08:57:15 [I] Completed /login 302 Found in 885.155µs
+2015/06/07 08:57:42 [I] [1;31mCompleted /public/app/panels/graph/module.js 404 Not Found in 1.492721ms[0m
+2015/06/07 09:50:18 [I] Starting Grafana
+2015/06/07 09:50:18 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 09:50:18 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 09:50:18 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 09:50:18 [I] Migrator: Starting DB migration
+2015/06/07 09:50:18 [I] Listen: http://0.0.0.0:3000
+2015/06/07 09:52:11 [I] Starting Grafana
+2015/06/07 09:52:11 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 09:52:11 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 09:52:11 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 09:52:11 [I] Migrator: Starting DB migration
+2015/06/07 09:52:11 [I] Listen: http://0.0.0.0:3000
+2015/06/07 10:25:06 [I] Starting Grafana
+2015/06/07 10:25:06 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 10:25:06 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 10:25:06 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 10:25:06 [I] Migrator: Starting DB migration
+2015/06/07 10:25:06 [I] Listen: http://0.0.0.0:3000
+2015/06/07 11:00:54 [I] Starting Grafana
+2015/06/07 11:00:54 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 11:00:54 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 11:00:54 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 11:00:54 [I] Migrator: Starting DB migration
+2015/06/07 11:00:54 [I] Listen: http://0.0.0.0:3000
+2015/06/07 11:01:41 [I] [1;31mCompleted /public/app/panels/graph/singleStatPanel.js 404 Not Found in 2.075419ms[0m
+2015/06/07 11:03:25 [I] Starting Grafana
+2015/06/07 11:03:25 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 11:03:25 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 11:03:25 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 11:03:25 [I] Migrator: Starting DB migration
+2015/06/07 11:03:25 [I] Listen: http://0.0.0.0:3000
+2015/06/07 11:19:18 [I] Starting Grafana
+2015/06/07 11:19:18 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 11:19:18 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 11:19:18 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 11:19:18 [I] Migrator: Starting DB migration
+2015/06/07 11:19:18 [I] Listen: http://0.0.0.0:3000
+2015/06/07 11:21:54 [I] Starting Grafana
+2015/06/07 11:21:54 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 11:21:54 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 11:21:54 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 11:21:54 [I] Migrator: Starting DB migration
+2015/06/07 11:21:54 [I] Listen: http://0.0.0.0:3000
+2015/06/07 11:44:17 [I] [1;31mCompleted /public/app/panels/graph/singleStatPanel.js 404 Not Found in 143.430465ms[0m
+2015/06/07 17:13:42 [I] Starting Grafana
+2015/06/07 17:13:42 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:13:42 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:13:42 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:13:42 [I] Migrator: Starting DB migration
+2015/06/07 17:13:42 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:15:42 [I] Starting Grafana
+2015/06/07 17:15:42 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:15:42 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:15:42 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:15:42 [I] Migrator: Starting DB migration
+2015/06/07 17:15:42 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:17:30 [I] Starting Grafana
+2015/06/07 17:17:30 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:17:30 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:17:30 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:17:30 [I] Migrator: Starting DB migration
+2015/06/07 17:17:30 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:18:10 [I] Starting Grafana
+2015/06/07 17:18:10 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:18:10 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:18:10 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:18:10 [I] Migrator: Starting DB migration
+2015/06/07 17:18:10 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:19:28 [I] Starting Grafana
+2015/06/07 17:19:28 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:19:28 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:19:28 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:19:28 [I] Migrator: Starting DB migration
+2015/06/07 17:19:28 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:21:24 [I] Starting Grafana
+2015/06/07 17:21:24 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:21:24 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:21:24 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:21:24 [I] Migrator: Starting DB migration
+2015/06/07 17:21:24 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:23:10 [I] Starting Grafana
+2015/06/07 17:23:10 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:23:10 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:23:10 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:23:10 [I] Migrator: Starting DB migration
+2015/06/07 17:23:10 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:24:49 [I] Starting Grafana
+2015/06/07 17:24:49 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:24:49 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:24:49 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:24:49 [I] Migrator: Starting DB migration
+2015/06/07 17:24:49 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:26:22 [I] Starting Grafana
+2015/06/07 17:26:22 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:26:22 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:26:22 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:26:22 [I] Migrator: Starting DB migration
+2015/06/07 17:26:22 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:29:52 [I] Starting Grafana
+2015/06/07 17:29:52 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:29:52 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:29:52 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:29:52 [I] Migrator: Starting DB migration
+2015/06/07 17:29:52 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:36:50 [I] Starting Grafana
+2015/06/07 17:36:50 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:36:50 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:36:50 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:36:50 [I] Migrator: Starting DB migration
+2015/06/07 17:36:50 [I] Listen: http://0.0.0.0:3000
+2015/06/07 17:39:44 [I] Starting Grafana
+2015/06/07 17:39:44 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 17:39:44 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 17:39:44 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 17:39:44 [I] Migrator: Starting DB migration
+2015/06/07 17:39:44 [I] Listen: http://0.0.0.0:3000
+2015/06/07 18:06:21 [I] Starting Grafana
+2015/06/07 18:06:21 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/07 18:06:21 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/07 18:06:21 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/07 18:06:21 [I] Migrator: Starting DB migration
+2015/06/07 18:06:21 [I] Listen: http://0.0.0.0:3000
+2015/06/07 21:40:52 [I] Completed /dashboard/db/new-dashboard 302 Found in 92.619137ms
+2015/06/07 21:52:17 [I] Completed /dashboard/db/new-dashboard 302 Found in 114.466577ms
+2015/06/07 21:52:56 [I] Completed /dashboard/db/new-dashboard 302 Found in 386.295µs
+2015/06/07 21:55:27 [I] Completed /dashboard/db/new-dashboard 302 Found in 12.976258ms
+2015/06/10 07:36:46 [I] Starting Grafana
+2015/06/10 07:36:46 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/10 07:36:46 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/10 07:36:46 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/10 07:36:46 [I] Migrator: Starting DB migration
+2015/06/10 07:36:46 [I] Listen: http://0.0.0.0:3000
+2015/06/10 07:36:51 [I] Completed / 302 Found in 601.751µs
+2015/06/10 07:36:51 [I] Completed /login 302 Found in 778.206µs
+2015/06/10 07:36:52 [I] Completed / 302 Found in 353.178µs
+2015/06/10 07:36:52 [I] Completed /login 302 Found in 733.245µs
+2015/06/11 09:42:41 [I] Starting Grafana
+2015/06/11 09:42:41 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/11 09:42:41 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/11 09:42:41 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/11 09:42:41 [I] Migrator: Starting DB migration
+2015/06/11 09:42:41 [I] Listen: http://0.0.0.0:3000
+2015/06/11 09:43:11 [I] Completed / 302 Found in 13.975954ms
+2015/06/11 09:43:11 [I] Completed /login 302 Found in 1.496094ms
+2015/06/11 09:45:08 [I] Starting Grafana
+2015/06/11 09:45:08 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/11 09:45:08 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/11 09:45:08 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/11 09:45:08 [I] Migrator: Starting DB migration
+2015/06/11 09:45:08 [I] Listen: http://0.0.0.0:3000
+2015/06/11 10:02:42 [I] Starting Grafana
+2015/06/11 10:02:42 [I] Version: master, Commit: NA, Build date: 1970-01-01 01:00:00 +0100 CET
+2015/06/11 10:02:42 [I] Configuration Info
+Config files:
+  [0]: /usr/lib64/go/src/github.com/grafana/grafana/conf/defaults.ini
+Paths:
+  home: /usr/lib64/go/src/github.com/grafana/grafana
+  data: /usr/lib64/go/src/github.com/grafana/grafana/data
+  logs: /usr/lib64/go/src/github.com/grafana/grafana/data/log
+
+2015/06/11 10:02:42 [I] Database: sqlite3, ConnectionString: file:/usr/lib64/go/src/github.com/grafana/grafana/data/grafana.db?cache=shared&mode=rwc&_loc=Local
+2015/06/11 10:02:42 [I] Migrator: Starting DB migration
+2015/06/11 10:02:42 [I] Listen: http://0.0.0.0:3000
