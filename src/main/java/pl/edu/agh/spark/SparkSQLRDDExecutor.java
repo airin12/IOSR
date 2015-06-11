@@ -59,7 +59,7 @@ public class SparkSQLRDDExecutor implements Serializable{
 				List<Row> rows = new ArrayList<Row>();
 				
 				for(SingleRow singleRow : singleRows)
-					rows.add(RowFactory.create(new Long(singleRow.getTimestamp()),new Double(singleRow.getValue()),singleRow.getTags().get("cpu")));
+					rows.add(RowFactory.create(new Long(singleRow.getTimestamp()),new Double(singleRow.getValue()),singleRow.getTags()));
 				
 				return rows;
 			}

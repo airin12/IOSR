@@ -23,7 +23,7 @@ public class DataPointsConverter {
 			end /= 1000;
 		
 		for(DataPoints points : datapoints){
-			for(int i = 0;i<points.aggregatedSize();i++){
+			for(int i = 0;i<points.size();i++){
 				long timestamp = points.timestamp(i);
 				if(String.valueOf(timestamp).length() == 13)
 					timestamp /= 1000;
