@@ -14,9 +14,9 @@ public class TestCaseOneTest {
 
 	@Test
 	public void testValidMessage(){
-		String [] args = new String[]{"mode=TEST1","address=172.17.84.76:7001",
+		String [] args = new String[]{"mode=TEST1","tsdb_address=172.17.84.76:2002",
 				"metric=mem.usage.perc","file=data2.txt","delay=1000",
-				"req_nr=1","tags=cpu:00","aggregator=sum","start=1429833600","end=1430006400"};
+				"req_nr=1","tags=cpu:00","aggregator=sum","start=1429833600","end=1430006400","service_address=172.17.84.76:7001"};
 		Configuration config = new Configuration(args);
 		assertTrue(config.isValid());
 		
