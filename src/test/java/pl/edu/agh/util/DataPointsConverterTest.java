@@ -20,6 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import pl.edu.agh.model.SingleRow;
 import pl.edu.agh.util.DataPointsConverter;
+import scala.Tuple2;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataPointsConverterTest {
@@ -37,7 +38,7 @@ public class DataPointsConverterTest {
     @Test
     public void shouldReturnEmptyListWhenDataPointsArrayIsEmpty(){
         DataPoints[] dataPoints = new DataPoints[0];
-        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags);
+        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags, new Tuple2<Long, Long>(0L, 1L));
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -48,7 +49,7 @@ public class DataPointsConverterTest {
         dataPoints[0] = prepareMockedDataPoints(2);
         when(mockedDataPoints.aggregatedSize()).thenReturn(2);
 
-        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags);
+        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags, new Tuple2<Long, Long>(0L, 1L));
 
         assertEquals(2, result.size());
     }
@@ -60,7 +61,7 @@ public class DataPointsConverterTest {
         dataPoints[1] = prepareMockedDataPoints(2);
         dataPoints[2] = prepareMockedDataPoints(3);
 
-        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags);
+        List<SingleRow> result = converter.convertToSingleRows(dataPoints, tags, new Tuple2<Long, Long>(0L, 1L));
 
         assertEquals(6, result.size());
     }

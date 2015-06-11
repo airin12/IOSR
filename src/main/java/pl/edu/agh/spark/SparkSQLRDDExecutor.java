@@ -50,14 +50,12 @@ public class SparkSQLRDDExecutor implements Serializable{
 					
 				TSDB tsdb = new TSDB(config);
 				Query query= tsdb.newQuery();
-		        query.setStartTime(queryParametrization.getStartTime());
-		        query.setEndTime(queryParametrization.getEndTime());
 		        query.setTimeSeries(queryParametrization.getMetric(), queryParametrization.getTags(), queryParametrization.getAggregator(), false);
 				query.setStartTime(tuple._1.longValue());
 				query.setEndTime(tuple._2.longValue());
 				DataPoints[] matchingPoints = query.run();
 				DataPointsConverter parser = new DataPointsConverter();
-				List<SingleRow> singleRows = parser.convertToSingleRows(matchingPoints, tags);
+				List<SingleRow> singleRows = parser.convertToSingleRows(matchingPoints, tags, tuple);
 				List<Row> rows = new ArrayList<Row>();
 				
 				for(SingleRow singleRow : singleRows)

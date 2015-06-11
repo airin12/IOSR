@@ -29,6 +29,10 @@ public class SingleRow implements Serializable{
 	public void setTags(Map<String, String> tags) {
 		this.tags = tags;
 	}
+	@Override
+	public String toString() {
+		return "SingleRow [timestamp=" + timestamp + ", value=" + value + ", tags=" + tags + "]";
+	}
 	
 	
 }
