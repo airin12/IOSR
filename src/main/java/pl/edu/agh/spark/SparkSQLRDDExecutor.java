@@ -60,15 +60,16 @@ public class SparkSQLRDDExecutor implements Serializable{
 				List<Row> rows = new ArrayList<Row>();
 				
 				int size = queryParametrization.getTags().values().size() + 2;
-				Object [] arrays = new Object[size];
+				
 				
 				for(SingleRow singleRow : singleRows){
+					Object [] arrays = new Object[size];
 					arrays[0] = new Long(singleRow.getTimestamp());
 					arrays[1] = new Double(singleRow.getValue());
-					Iterator<String> it = queryParametrization.getTags().values().iterator();
+					Iterator<String> it = queryParametrization.getTags().keySet().iterator();
 					int index = 0;
 					while(it.hasNext()){
-						arrays[2+index] = it.next();
+						arrays[2+index] = singleRow.getTags().get(it.next());
 						index++;
 					}
 					rows.add(RowFactory.create(arrays));
