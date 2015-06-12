@@ -2,6 +2,7 @@ package pl.edu.agh.spark;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -58,9 +59,20 @@ public class SparkSQLRDDExecutor implements Serializable{
 				List<SingleRow> singleRows = parser.convertToSingleRows(matchingPoints, tags, tuple);
 				List<Row> rows = new ArrayList<Row>();
 				
-				for(SingleRow singleRow : singleRows)
-					rows.add(RowFactory.create(new Long(singleRow.getTimestamp()),new Double(singleRow.getValue()),singleRow.getTags()));
+				int size = queryParametrization.getTags().values().size() + 2;
+				Object [] arrays = new Object[size];
 				
+				for(SingleRow singleRow : singleRows){
+					arrays[0] = new Long(singleRow.getTimestamp());
+					arrays[1] = new Double(singleRow.getValue());
+					Iterator<String> it = queryParametrization.getTags().values().iterator();
+					int index = 0;
+					while(it.hasNext()){
+						arrays[2+index] = it.next();
+						index++;
+					}
+					rows.add(RowFactory.create(arrays));
+				}
 				return rows;
 			}
 		});
