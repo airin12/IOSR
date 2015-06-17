@@ -32,6 +32,7 @@ import com.google.gson.JsonElement;
 public class SqlSparkJob extends AbstractSparkJob {
 
 	private final Logger logger = LogManager.getLogger(SqlSparkJob.class);
+	private String slavesConfigFile;
 
 	public SqlSparkJob(TSDB tsdb, JavaSparkContext sparkContext) {
 		super(tsdb, sparkContext);
@@ -54,7 +55,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 		StructType schema = DataTypes.createStructType(fields);
 
 		SparkSQLRDDExecutor executor = new SparkSQLRDDExecutor();
-		JavaRDD<Row> rowRDD = executor.loadTSDBData(rdd, combinedQuery);
+		JavaRDD<Row> rowRDD = executor.loadTSDBData(rdd, combinedQuery, slavesConfigFile);
 
 		DataFrame rowsDataFrame = sqlContext.createDataFrame(rowRDD, schema);
 		rowsDataFrame.registerTempTable(SparkSQLAnalyzer.SPARK_SQL_TABLENAME);
@@ -72,7 +73,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 	private JsonElement executeStandardTSDBQuery(JavaPairRDD<Long, Long> rdd, String metric, List<String> tagNames, String combinedQuery, SparkSQLAnalyzer analyzer, JsonElement result) {
 
 		SparkSQLRDDExecutor executor = new SparkSQLRDDExecutor();
-		JavaRDD<Row> rowRDD = executor.loadTSDBData(rdd, combinedQuery);
+		JavaRDD<Row> rowRDD = executor.loadTSDBData(rdd, combinedQuery, slavesConfigFile);
 
 		List<Row> valuesInList = rowRDD.collect();
 
@@ -100,6 +101,7 @@ public class SqlSparkJob extends AbstractSparkJob {
 
 			try {
 				configProvider = new ConfigurationProvider(ConfigurationProvider.CONFIGURATION_FILENAME);
+				this.slavesConfigFile = configProvider.getProperty(ConfigurationProvider.SPARK_SLAVE_TSDB_CONFIG_PROPERTY_NAME);
 				numSlices = Integer.parseInt(configProvider.getProperty(ConfigurationProvider.SPARK_SLAVES_NUMBER_PROPERTY_NAME));
 			} catch (IOException e) {
 				e.printStackTrace();

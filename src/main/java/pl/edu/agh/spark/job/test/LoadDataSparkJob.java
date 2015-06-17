@@ -31,10 +31,12 @@ public class LoadDataSparkJob extends AbstractSparkJob{
 
 		ConfigurationProvider configProvider;
 		int numSlices = 1;
+		String configFile = null;
 
 		try {
 			configProvider = new ConfigurationProvider(ConfigurationProvider.CONFIGURATION_FILENAME);
 			numSlices = Integer.parseInt(configProvider.getProperty(ConfigurationProvider.SPARK_SLAVES_NUMBER_PROPERTY_NAME));
+			configFile = configProvider.getProperty(ConfigurationProvider.SPARK_SLAVE_TSDB_CONFIG_PROPERTY_NAME);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,7 +48,7 @@ public class LoadDataSparkJob extends AbstractSparkJob{
 		
 		long start = System.nanoTime();
 		
-		JavaRDD<Row> rowRDD = executor.loadTSDBData(sparkContext.parallelizePairs(timestamps, numSlices), queryParametrization.toCombinedQuery());
+		JavaRDD<Row> rowRDD = executor.loadTSDBData(sparkContext.parallelizePairs(timestamps, numSlices), queryParametrization.toCombinedQuery(), configFile);
 
 		long end = System.nanoTime();
 		

@@ -14,6 +14,7 @@ public class ConfigurationProvider {
     public static final String TSDB_CONFIG_FILENAME_PROPERTY_NAME = "tsdb.config.file";
     public static final String TSDB_SLAVE_CONFIG_FILENAME_PROPERTY_NAME = "tsdb.slave.config.file";
     public static final String SPARK_SLAVES_NUMBER_PROPERTY_NAME = "spark.slaves.number";
+    public static final String SPARK_SLAVE_TSDB_CONFIG_PROPERTY_NAME = "spark.slaves.config.file";
     
     public ConfigurationProvider(String configFilename) throws IOException{
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

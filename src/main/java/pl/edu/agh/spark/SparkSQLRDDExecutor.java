@@ -37,7 +37,7 @@ public class SparkSQLRDDExecutor implements Serializable{
 		return rowRDD;
 	}
 	
-	public JavaRDD<Row> loadTSDBData(JavaPairRDD<Long,Long> rdd, final String combinedQuery){
+	public JavaRDD<Row> loadTSDBData(JavaPairRDD<Long,Long> rdd, final String combinedQuery, final String configFile){
 		JavaRDD<Row> newRdd = rdd.flatMap(new FlatMapFunction<Tuple2<Long,Long>, Row>() {
 
 			private static final long serialVersionUID = 1L;
@@ -47,7 +47,7 @@ public class SparkSQLRDDExecutor implements Serializable{
 
 				TSDBQueryParametrization queryParametrization = new TSDBQueryParametrizationBuilder().buildFromCombinedQuery(combinedQuery);
 				Map<String,String> tags = queryParametrization.getTags();
-				Config config = new Config("/root/files/opentsdb.conf");
+				Config config = new Config(configFile);
 					
 				TSDB tsdb = new TSDB(config);
 				Query query= tsdb.newQuery();
