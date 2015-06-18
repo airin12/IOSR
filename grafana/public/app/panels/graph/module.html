@@ -23,12 +23,14 @@
         </div>
         <br>
         <br>
-        <ul>
-        <!--<li ng-repeat="expr1 in value.slice(1,value.length) track by $index ">-->
-        <li ng-repeat="(expr1, expr2) in value track by $index">
-            <tt>{{expr1}} {{expr2}}</tt>
-        </li>
-        </ul>
+        <ol>
+        <li ng-repeat="expr in value track by $index">
+            <ul>
+            <li ng-repeat="(expr1, expr2) in expr.values track by $index">
+                <tt>{{expr1}} {{expr2}}</tt>
+            </li>
+            </ul>
+        </ol>
         <div class="singlestat-panel" singlestat-panel></div>
 		
 	</div>

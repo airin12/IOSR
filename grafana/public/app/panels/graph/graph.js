@@ -232,20 +232,20 @@ function (angular, $, kbn, moment, _, GraphTooltip) {
               series.data = [];
               series.stack = false;
             }
+            
+            if ("-1" in data[i]["values"] && data[i]["values"]["-1"]==-1){
+              // this series is a single value
+              delete data[i]["values"]["-1"];
+              //data[i]["datapoints"].splice(0,0);
+              data[i].data = [];
+              data[i].stack = false;
+            }
+            else {
+              delete data[i]["values"];
+            }
           }
-          
-          if (data[0]["datapoints"][0][0]==-1) {
-            var value = data[0]["values"];
-            delete value["-1"];
-            scope.value = value;
-            console.log(data);
-            data[0]["datapoints"].splice(0,0);
-          }
-          else {
-              scope.value = [];
-          }
-          //console.log(JSON.stringify(data[0]["datapoints"][0][1]));
-          //return;
+          scope.value = data;
+
           if (data.length && data[0].stats.timeStep) {
             options.series.bars.barWidth = data[0].stats.timeStep / 1.5;
           }

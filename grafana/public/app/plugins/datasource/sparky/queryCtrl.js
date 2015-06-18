@@ -42,24 +42,6 @@ function (angular, _, kbn) {
       $scope.panel.targets.push(clone);
     };
 
-    $scope.suggestMetrics = function(query, callback) {
-      $scope.datasource
-        .performSuggestQuery(query, 'metrics')
-        .then(callback);
-    };
-
-    $scope.suggestTagKeys = function(query, callback) {
-      $scope.datasource
-        .performSuggestQuery(query, 'tagk')
-        .then(callback);
-    };
-
-    $scope.suggestTagValues = function(query, callback) {
-      $scope.datasource
-        .performSuggestQuery(query, 'tagv')
-        .then(callback);
-    };
-
     $scope.addTag = function() {
       if (!$scope.addTagMode) {
         $scope.addTagMode = true;

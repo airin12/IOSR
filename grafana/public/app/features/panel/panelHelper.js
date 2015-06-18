@@ -108,7 +108,6 @@ function (angular, _, kbn, $) {
       this.setTimeQueryStart(scope);
       return datasource.query(metricsQuery).then(function(results) {
         self.setTimeQueryEnd(scope);
-        console.log(results);
         if (scope.dashboard.snapshot) {
           scope.panel.snapshotData = results;
         }

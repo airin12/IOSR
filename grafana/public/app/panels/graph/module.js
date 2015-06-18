@@ -147,10 +147,14 @@ function (angular, app, $, _, kbn, moment, TimeSeries, PanelMeta) {
       $scope.dataHandler(snapshotData);
     };
 
+    var value2 = [];
+    var global_i = 0;
     
     $scope.dataHandler = function(results) {
-      value = results.mData[0].dps;
-      //console.log(results.mData[0].dps);
+      value = results.mData;
+      for (var i = 0; i < results.mData.length; i++){
+            value2.push(results.mData[i].dps);
+      }
       // png renderer returns just a url
       if (_.isString(results)) {
         $scope.render(results);
@@ -160,9 +164,9 @@ function (angular, app, $, _, kbn, moment, TimeSeries, PanelMeta) {
       $scope.datapointsWarning = false;
       $scope.datapointsCount = 0;
       $scope.datapointsOutside = false;
-
+      
       $scope.seriesList = _.map(results.data, $scope.seriesHandler);
-
+      
       $scope.datapointsWarning = $scope.datapointsCount === 0 || $scope.datapointsOutside;
 
       $scope.annotationsPromise
@@ -175,6 +179,7 @@ function (angular, app, $, _, kbn, moment, TimeSeries, PanelMeta) {
           $scope.render($scope.seriesList);
         });
     };
+    
 
     $scope.seriesHandler = function(seriesData, index) {
       var datapoints = seriesData.datapoints;
@@ -185,9 +190,10 @@ function (angular, app, $, _, kbn, moment, TimeSeries, PanelMeta) {
         datapoints: datapoints,
           alias: alias,
           color: color,
-          values: value
+          //values: value
+          values: value2[global_i]
       });
-
+      global_i = global_i + 1;
       if (datapoints && datapoints.length > 0) {
         var last = moment.utc(datapoints[datapoints.length - 1][1]);
         var from = moment.utc($scope.range.from);
